@@ -1,12 +1,15 @@
 package Test::Magpie::Invocation;
 BEGIN {
-  $Test::Magpie::Invocation::VERSION = '0.01_01';
+  $Test::Magpie::Invocation::VERSION = '0.01';
 }
+# ABSTRACT: Represents an invocation of a method
 use Moose;
 
 with 'Test::Magpie::Role::MethodCall';
 
 1;
+
+
 
 __END__
 =pod
@@ -15,11 +18,15 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Invocation
+Test::Magpie::Invocation - Represents an invocation of a method
+
+=head1 INTERNAL
+
+This class is only meant for internal usage and has no public API
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

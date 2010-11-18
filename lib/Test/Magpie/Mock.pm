@@ -1,12 +1,10 @@
 package Test::Magpie::Mock;
 BEGIN {
-  $Test::Magpie::Mock::VERSION = '0.01_01';
+  $Test::Magpie::Mock::VERSION = '0.01';
 }
-use Moose;
-
-use Sub::Exporter -setup => {
-    exports => [qw( add_stub )],
-};
+# ABSTRACT: A mock object
+use Moose -metaclass => 'Test::Magpie::Meta::Class';
+use namespace::autoclean;
 
 use aliased 'Test::Magpie::Invocation';
 
@@ -35,7 +33,8 @@ sub AUTOLOAD {
     my $method = $AUTOLOAD;
     my $self = shift;
     my $meta = find_meta($self);
-    my $invocations = $meta->get_attribute('invocations')->get_value($self);
+    my $invocations = $meta->find_attribute_by_name('invocations')
+        ->get_value($self);
     my $invocation = Invocation->new(
         method_name => extract_method_name($method),
         arguments => \@_
@@ -43,26 +42,23 @@ sub AUTOLOAD {
 
     push @$invocations, $invocation;
 
-    if(my $stubs = $meta->get_attribute('stubs')->get_value($self)->{
+    if(my $stubs = $meta->find_attribute_by_name('stubs')->get_value($self)->{
         $invocation->method_name
     }) {
-        
         my $stub = first { $_->satisfied_by($invocation) } @$stubs;
         return unless $stub;
         $stub->execute;
     }
 }
 
-sub add_stub {
-    my ($self, $stub) = @_;
-    my $meta = find_meta($self);
-    my $stubs = $meta->get_attribute('stubs')->get_value($self);
-    my $method = $stub->method_name;
-    $stubs->{$method} ||= [];
-    push @{ $stubs->{$method} }, $stub;
+sub does { 1 }
+sub isa {
+    my ($self, $package) = @_;
+    return !($package =~ /^Class::MOP::*/);
 }
 
 1;
+
 
 __END__
 =pod
@@ -71,11 +67,44 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Mock
+Test::Magpie::Mock - A mock object
+
+=head1 DESCRIPTION
+
+Mock objects are the objects you pass around as if they were real objects. They
+do not have a defined API; any method call is valid. A mock on its own is in
+record mode - method calls and arguments will be saved. You can switch
+temporarily to stub and verification mode with C<when> and C<verify> in
+L<Test::Magpie>, respectively.
+
+=head1 ATTRIBUTES
+
+=head2 stubs
+
+This attribute is internal, and not publically accessible.
+
+Returns a map of method name to stub array references. Stubs are matched against
+invocation arguments to determine which stub to dispatch to.
+
+=head2 invocations
+
+This attribute is internal, and not publically accessible.
+
+Returns an array reference of all method invocations on this mock.
+
+=head1 METHODS
+
+=head2 isa $class
+
+Forced to return true for any package
+
+=head2 does $role
+
+Forced to return true for any role
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

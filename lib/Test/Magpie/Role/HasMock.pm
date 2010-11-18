@@ -1,7 +1,8 @@
 package Test::Magpie::Role::HasMock;
 BEGIN {
-  $Test::Magpie::Role::HasMock::VERSION = '0.01_01';
+  $Test::Magpie::Role::HasMock::VERSION = '0.01';
 }
+# ABSTRACT: A role for objects that wrap around a mock
 use Moose::Role;
 use namespace::autoclean;
 
@@ -12,6 +13,7 @@ has 'mock' => (
 
 1;
 
+
 __END__
 =pod
 
@@ -19,11 +21,21 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Role::HasMock
+Test::Magpie::Role::HasMock - A role for objects that wrap around a mock
+
+=head1 ATTRIBUTES
+
+=head2 mock
+
+The mock object itself. No accessor is generated. Required.
+
+=head1 INTERNAL
+
+This class is internal, and not meant for use outside Magpie.
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

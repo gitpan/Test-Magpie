@@ -1,9 +1,9 @@
 
 
 This archive contains the distribution Test-Magpie,
-version 0.01_01:
+version 0.01:
 
-  Spy on objcets to achieve test doubles (mock testing)
+  Spy on objects to achieve test doubles (mock testing)
 
 This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
 

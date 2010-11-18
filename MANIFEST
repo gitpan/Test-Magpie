@@ -6,7 +6,9 @@ Makefile.PL
 README
 dist.ini
 lib/Test/Magpie.pm
+lib/Test/Magpie/ArgumentMatcher.pm
 lib/Test/Magpie/Invocation.pm
+lib/Test/Magpie/Meta/Class.pm
 lib/Test/Magpie/Mock.pm
 lib/Test/Magpie/Role/HasMock.pm
 lib/Test/Magpie/Role/MethodCall.pm
@@ -18,3 +20,4 @@ t/basic.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+t/roles.t

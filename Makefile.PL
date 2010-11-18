@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.31;
 
 
 my %WriteMakefileArgs = (
-  'ABSTRACT' => 'Spy on objcets to achieve test doubles (mock testing)',
+  'ABSTRACT' => 'Spy on objects to achieve test doubles (mock testing)',
   'AUTHOR' => 'Oliver Charles',
   'BUILD_REQUIRES' => {},
   'CONFIGURE_REQUIRES' => {
@@ -32,7 +32,7 @@ my %WriteMakefileArgs = (
     'aliased' => '0.30',
     'namespace::autoclean' => '0.09'
   },
-  'VERSION' => '0.01_01',
+  'VERSION' => '0.01',
   'test' => {
     'TESTS' => 't/*.t'
   }

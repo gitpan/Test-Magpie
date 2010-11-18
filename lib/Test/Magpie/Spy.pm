@@ -1,7 +1,8 @@
 package Test::Magpie::Spy;
 BEGIN {
-  $Test::Magpie::Spy::VERSION = '0.01_01';
+  $Test::Magpie::Spy::VERSION = '0.01';
 }
+# ABSTRACT: A look into the invocation history of a mock for verifaciotn
 use Moose;
 use namespace::autoclean;
 
@@ -60,6 +61,8 @@ sub AUTOLOAD {
 
 1;
 
+
+
 __END__
 =pod
 
@@ -67,11 +70,23 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Spy
+Test::Magpie::Spy - A look into the invocation history of a mock for verifaciotn
+
+=head1 DESCRIPTION
+
+Spy objects allow you to look inside a mock and verify that certain methods have
+been called. You create these objects by using C<verify> from L<Test::Magpie>.
+
+Spy objects do not have a public API as such; they share the same method calls
+as the mock object itself. The difference being, a method call now checks that
+the method was invoked on the mock at some point in time, and if not, fails a
+test.
+
+You may use argument matchers in verification method calls.
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

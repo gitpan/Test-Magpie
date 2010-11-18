@@ -1,7 +1,8 @@
 package Test::Magpie::Stub;
 BEGIN {
-  $Test::Magpie::Stub::VERSION = '0.01_01';
+  $Test::Magpie::Stub::VERSION = '0.01';
 }
+# ABSTRACT: The declaration of a stubbed method
 use Moose;
 
 use List::AllUtils qw( all pairwise );
@@ -50,6 +51,8 @@ sub then_die {
 
 1;
 
+
+
 __END__
 =pod
 
@@ -57,11 +60,45 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Stub
+Test::Magpie::Stub - The declaration of a stubbed method
+
+=head1 DESCRIPTION
+
+Represents a stub method - a method that may have some sort of action when
+called. Stub methods are created by invoking the method name (with a set of
+possible argument matchers/arguments) on the object returned by C<when> in
+L<Test::Magpie>.
+
+Stub methods have a stack of executions. Every time the stub method is called
+(matching arguments), the next execution is taken from the front of the queue
+and called. As stubs are matched via arguments, you may have multiple stubs for
+the same method name.
+
+=head1 ATTRIBUTES
+
+=head2 executions
+
+An array reference queue of all stub executions. Internal.
+
+=head1 METHODS
+
+=head2 then_return $return_value
+
+Pushes a stub method that will return $return_value to the end of the execution
+queue.
+
+=head2 then_die $exception
+
+Pushes a stub method that will throw C<$exception> when called to the end of the
+execution stack.
+
+=head2 execute
+
+Internal. Will execute the next execution, if possible
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 
