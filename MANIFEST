@@ -7,6 +7,7 @@ README
 dist.ini
 lib/Test/Magpie.pm
 lib/Test/Magpie/ArgumentMatcher.pm
+lib/Test/Magpie/Inspect.pm
 lib/Test/Magpie/Invocation.pm
 lib/Test/Magpie/Meta/Class.pm
 lib/Test/Magpie/Mock.pm
@@ -14,6 +15,7 @@ lib/Test/Magpie/Role/HasMock.pm
 lib/Test/Magpie/Role/MethodCall.pm
 lib/Test/Magpie/Spy.pm
 lib/Test/Magpie/Stub.pm
+lib/Test/Magpie/Types.pm
 lib/Test/Magpie/Util.pm
 lib/Test/Magpie/When.pm
 t/basic.t

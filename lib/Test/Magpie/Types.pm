@@ -1,15 +1,12 @@
-package Test::Magpie::Invocation;
+package Test::Magpie::Types;
 BEGIN {
-  $Test::Magpie::Invocation::VERSION = '0.02';
+  $Test::Magpie::Types::VERSION = '0.02';
 }
-# ABSTRACT: Represents an invocation of a method
-use Moose;
+use MooseX::Types -declare => [qw( Mock )];
 
-with 'Test::Magpie::Role::MethodCall';
+class_type Mock, { class => 'Test::Magpie::Mock' };
 
 1;
-
-
 
 __END__
 =pod
@@ -18,11 +15,7 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Invocation - Represents an invocation of a method
-
-=head1 INTERNAL
-
-This class is only meant for internal usage and has no public API
+Test::Magpie::Types
 
 =head1 AUTHOR
 

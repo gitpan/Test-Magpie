@@ -1,6 +1,6 @@
 package Test::Magpie::Spy;
 BEGIN {
-  $Test::Magpie::Spy::VERSION = '0.01';
+  $Test::Magpie::Spy::VERSION = '0.02';
 }
 # ABSTRACT: A look into the invocation history of a mock for verifaciotn
 use Moose;
@@ -49,7 +49,7 @@ sub AUTOLOAD {
     my $invocations = find_meta($mock)->get_attribute('invocations')
         ->get_value($mock);
 
-    my @matches = grep { $_->satisfied_by($observe) } @$invocations;
+    my @matches = grep { $observe->satisfied_by($_) } @$invocations;
     
     my $invocation_counter = $meta->get_attribute('invocation_counter')
         ->get_value($self);
@@ -86,7 +86,7 @@ You may use argument matchers in verification method calls.
 
 =head1 AUTHOR
 
-Oliver Charles
+  Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

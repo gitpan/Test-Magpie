@@ -1,6 +1,6 @@
 package Test::Magpie::Stub;
 BEGIN {
-  $Test::Magpie::Stub::VERSION = '0.01';
+  $Test::Magpie::Stub::VERSION = '0.02';
 }
 # ABSTRACT: The declaration of a stubbed method
 use Moose;
@@ -17,20 +17,24 @@ has 'executions' => (
     default => sub { [] },
     handles => {
         _store_execution => 'push',
-        _next_execution => 'shift'
+        _next_execution => 'shift',
+        _has_executions => 'count',
     }
 );
 
 sub execute {
     my $self = shift;
-    return $self->_next_execution->();
+    if(my $code = $self->_next_execution) {
+        return $code->();
+    }
+    return;
 }
 
 sub then_return {
     my $self = shift;
-    my $ret = shift;
+    my @ret = @_;
     $self->_store_execution(sub {
-        return $ret;
+        return wantarray ? (@ret) : $ret[0];
     });
     return $self;
 }
@@ -98,7 +102,7 @@ Internal. Will execute the next execution, if possible
 
 =head1 AUTHOR
 
-Oliver Charles
+  Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

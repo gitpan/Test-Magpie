@@ -1,12 +1,13 @@
 package Test::Magpie::Mock;
 BEGIN {
-  $Test::Magpie::Mock::VERSION = '0.01';
+  $Test::Magpie::Mock::VERSION = '0.02';
 }
 # ABSTRACT: A mock object
 use Moose -metaclass => 'Test::Magpie::Meta::Class';
 use namespace::autoclean;
 
 use aliased 'Test::Magpie::Invocation';
+use aliased 'Test::Magpie::Stub';
 
 use Test::Magpie::Util qw( extract_method_name );
 use List::AllUtils qw( first );
@@ -45,9 +46,14 @@ sub AUTOLOAD {
     if(my $stubs = $meta->find_attribute_by_name('stubs')->get_value($self)->{
         $invocation->method_name
     }) {
-        my $stub = first { $_->satisfied_by($invocation) } @$stubs;
-        return unless $stub;
-        $stub->execute;
+        my $stub_meta = find_meta(Stub);
+        my @possible = grep { $_->satisfied_by($invocation) } @$stubs;
+        for my $stub (@possible) {
+            if ($stub->_has_executions) {
+                return $stub->execute;
+            }
+        }
+        return;
     }
 }
 
@@ -104,7 +110,7 @@ Forced to return true for any role
 
 =head1 AUTHOR
 
-Oliver Charles
+  Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

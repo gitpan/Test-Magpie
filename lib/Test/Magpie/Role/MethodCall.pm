@@ -1,6 +1,6 @@
 package Test::Magpie::Role::MethodCall;
 BEGIN {
-  $Test::Magpie::Role::MethodCall::VERSION = '0.01';
+  $Test::Magpie::Role::MethodCall::VERSION = '0.02';
 }
 # ABSTRACT: A role that represents a method call
 use Moose::Role;
@@ -10,6 +10,7 @@ use aliased 'Test::Magpie::ArgumentMatcher';
 
 use MooseX::Types::Moose qw( ArrayRef Str );
 use Devel::PartialDump;
+use Test::Magpie::Util qw( match );
 
 has 'method_name' => (
     isa => Str,
@@ -37,18 +38,17 @@ sub satisfied_by {
     return unless $invocation->method_name eq $self->method_name;
     my @input = $invocation->arguments;
     my @expected = $self->arguments;
-    my $valid = 1;
-    while($valid && @input && @expected) {
+    while(@input && @expected) {
         my $matcher = shift(@expected);
         if (ref($matcher) eq ArgumentMatcher) {
-            ($valid, @input) = $matcher->match(@input);
+            @input = $matcher->match(@input);
         }
         else {
             my $value = shift(@input);
-            $valid = $value ~~ $matcher;
+            @input = undef unless match($value, $matcher);
         }
     }
-    return $valid == 1 && @input == 0 && @expected == 0;
+    return @input == 0 && @expected == 0;
 }
 
 1;
@@ -93,7 +93,7 @@ This class is internal and not meant for use outside Magpie.
 
 =head1 AUTHOR
 
-Oliver Charles
+  Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 
