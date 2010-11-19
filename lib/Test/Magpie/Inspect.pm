@@ -1,6 +1,6 @@
 package Test::Magpie::Inspect;
 BEGIN {
-  $Test::Magpie::Inspect::VERSION = '0.02';
+  $Test::Magpie::Inspect::VERSION = '0.03';
 }
 use Moose;
 use namespace::autoclean;
@@ -48,7 +48,7 @@ Test::Magpie::Inspect
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

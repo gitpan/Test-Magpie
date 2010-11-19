@@ -1,6 +1,6 @@
 package Test::Magpie;
 BEGIN {
-  $Test::Magpie::VERSION = '0.02';
+  $Test::Magpie::VERSION = '0.03';
 }
 # ABSTRACT: Spy on objects to achieve test doubles (mock testing)
 use strict;
@@ -142,7 +142,7 @@ documentation for how to fully specify the stub.
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

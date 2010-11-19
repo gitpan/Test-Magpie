@@ -1,6 +1,6 @@
 package Test::Magpie::Mock;
 BEGIN {
-  $Test::Magpie::Mock::VERSION = '0.02';
+  $Test::Magpie::Mock::VERSION = '0.03';
 }
 # ABSTRACT: A mock object
 use Moose -metaclass => 'Test::Magpie::Meta::Class';
@@ -110,7 +110,7 @@ Forced to return true for any role
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

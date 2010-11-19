@@ -1,6 +1,6 @@
 package Test::Magpie::Spy;
 BEGIN {
-  $Test::Magpie::Spy::VERSION = '0.02';
+  $Test::Magpie::Spy::VERSION = '0.03';
 }
 # ABSTRACT: A look into the invocation history of a mock for verifaciotn
 use Moose;
@@ -86,7 +86,7 @@ You may use argument matchers in verification method calls.
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

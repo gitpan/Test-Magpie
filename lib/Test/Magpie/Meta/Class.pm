@@ -1,6 +1,6 @@
 package Test::Magpie::Meta::Class;
 BEGIN {
-  $Test::Magpie::Meta::Class::VERSION = '0.02';
+  $Test::Magpie::Meta::Class::VERSION = '0.03';
 }
 # ABSTRACT: Metaclass for mocks
 use Moose;
@@ -33,7 +33,7 @@ This metaclass is internal and not meant for use outside Magpie
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

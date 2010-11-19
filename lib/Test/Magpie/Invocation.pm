@@ -1,6 +1,6 @@
 package Test::Magpie::Invocation;
 BEGIN {
-  $Test::Magpie::Invocation::VERSION = '0.02';
+  $Test::Magpie::Invocation::VERSION = '0.03';
 }
 # ABSTRACT: Represents an invocation of a method
 use Moose;
@@ -26,7 +26,7 @@ This class is only meant for internal usage and has no public API
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

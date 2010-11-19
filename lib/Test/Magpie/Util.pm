@@ -1,6 +1,6 @@
 package Test::Magpie::Util;
 BEGIN {
-  $Test::Magpie::Util::VERSION = '0.02';
+  $Test::Magpie::Util::VERSION = '0.03';
 }
 # ABSTRACT: Utilities used by Test::Magpie
 use strict;
@@ -52,7 +52,7 @@ Internal. Match 2 values for equality
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

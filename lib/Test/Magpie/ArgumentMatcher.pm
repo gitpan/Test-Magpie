@@ -1,6 +1,6 @@
 package Test::Magpie::ArgumentMatcher;
 BEGIN {
-  $Test::Magpie::ArgumentMatcher::VERSION = '0.02';
+  $Test::Magpie::ArgumentMatcher::VERSION = '0.03';
 }
 # ABSTRACT: Various templates to catch arguments
 
@@ -119,7 +119,7 @@ one. You are, however, welcome to use them before.
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

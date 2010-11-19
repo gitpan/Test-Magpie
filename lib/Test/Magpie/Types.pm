@@ -1,6 +1,6 @@
 package Test::Magpie::Types;
 BEGIN {
-  $Test::Magpie::Types::VERSION = '0.02';
+  $Test::Magpie::Types::VERSION = '0.03';
 }
 use MooseX::Types -declare => [qw( Mock )];
 
@@ -19,7 +19,7 @@ Test::Magpie::Types
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 

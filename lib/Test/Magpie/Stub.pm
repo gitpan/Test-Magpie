@@ -1,6 +1,6 @@
 package Test::Magpie::Stub;
 BEGIN {
-  $Test::Magpie::Stub::VERSION = '0.02';
+  $Test::Magpie::Stub::VERSION = '0.03';
 }
 # ABSTRACT: The declaration of a stubbed method
 use Moose;
@@ -102,7 +102,7 @@ Internal. Will execute the next execution, if possible
 
 =head1 AUTHOR
 
-  Oliver Charles
+Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 
