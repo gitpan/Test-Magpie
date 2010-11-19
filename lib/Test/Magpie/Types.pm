@@ -1,12 +1,14 @@
 package Test::Magpie::Types;
 BEGIN {
-  $Test::Magpie::Types::VERSION = '0.03';
+  $Test::Magpie::Types::VERSION = '0.04';
 }
+# ABSTRACT: Type constraints used by Magpie
 use MooseX::Types -declare => [qw( Mock )];
 
 class_type Mock, { class => 'Test::Magpie::Mock' };
 
 1;
+
 
 __END__
 =pod
@@ -15,7 +17,17 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Types
+Test::Magpie::Types - Type constraints used by Magpie
+
+=head1 DESCRIPTION
+
+This class is mostly meant for internal purposes.
+
+=head1 TYPES
+
+=head2 Mock
+
+Verifies that an object is a Magpie mock
 
 =head1 AUTHOR
 

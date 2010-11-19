@@ -1,6 +1,6 @@
 package Test::Magpie::Mock;
 BEGIN {
-  $Test::Magpie::Mock::VERSION = '0.03';
+  $Test::Magpie::Mock::VERSION = '0.04';
 }
 # ABSTRACT: A mock object
 use Moose -metaclass => 'Test::Magpie::Meta::Class';

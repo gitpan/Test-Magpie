@@ -1,6 +1,6 @@
 package Test::Magpie::ArgumentMatcher;
 BEGIN {
-  $Test::Magpie::ArgumentMatcher::VERSION = '0.03';
+  $Test::Magpie::ArgumentMatcher::VERSION = '0.04';
 }
 # ABSTRACT: Various templates to catch arguments
 
@@ -12,7 +12,7 @@ use Set::Object qw( set );
 
 use Sub::Exporter -setup => {
     exports => [
-        qw( anything hash custom_matcher ),
+        qw( anything hash custom_matcher type ),
         set => sub { \&_set }
     ],
 };
@@ -49,10 +49,19 @@ sub match {
     return $self->(@input);
 }
 
-sub custom_matcher {
+sub custom_matcher (&;) {
     my $test = shift;
     bless sub {
+        local $_ = $_[0];
         $test->(@_) ? () : undef
+    }, __PACKAGE__;
+}
+
+sub type {
+    my $type = shift;
+    bless sub {
+        my ($arg, @in) = @_;
+        $type->check($arg) ? @in : undef
     }, __PACKAGE__;
 }
 
@@ -116,6 +125,37 @@ Consumes all remaining arguments (even 0) and returns none. This effectively
 slurps in any remaining arguments and considers them valid. Note, as this
 consumes I<all> arguments, you cannot use further argument validators after this
 one. You are, however, welcome to use them before.
+
+=head2 custom_matcher { ...code.... }
+
+Creates a custom argument matcher for you. This argument matcher is assumed to
+be the final argument matcher. If this matcher passes (that is, returns a true
+value), then it is assumed that all remaining arguments have been matched.
+
+Custom matchers are code references. You can use $_ to reference to the first
+argument, but a custom argument matcher may match more than one argument. It is
+passed the contents of C<@_> that have not yet been matched, in essence.
+
+=head2 type $type_constraint
+
+Checks that a single value meets a given Moose type constraint. You may want to
+consider the use of L<MooseX::Types> here for code clarity.
+
+=head2 hash %match
+
+Does deep comparison on all remaining arguments, and verifies that they meet the
+specification in C<%match>. Note that this is for hashes, B<not> hash
+references!
+
+=head2 set @values
+
+Compares that all remaining arguments match the set of values in C<@values>.
+This allows you to compare objects out of order.
+
+Note: this currently uses real L<Set::Object>s to do the work which means
+duplicate arguments B<are ignored>. For example C<1, 1, 2> will match C<1, 2>,
+C<1, 2, 2>. This is probably a bug and I will fix it, but for now I'm mostly
+waiting for a bug report - sorry!
 
 =head1 AUTHOR
 

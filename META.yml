@@ -16,7 +16,6 @@ requires:
   Devel::PartialDump: 0.13
   List::AllUtils: 0.02
   Moose: 1.14
-  MooseX::Params::Validate: 0.14
   MooseX::Types::Moose: 0.21
   MooseX::Types::Structured: 0.21
   Set::Object: 1.28
@@ -26,7 +25,7 @@ requires:
   Test::More: 0.96
   aliased: 0.30
   namespace::autoclean: 0.09
-version: 0.03
+version: 0.04
 x_Dist_Zilla:
   plugins:
     -

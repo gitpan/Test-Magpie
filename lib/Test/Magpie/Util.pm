@@ -1,6 +1,6 @@
 package Test::Magpie::Util;
 BEGIN {
-  $Test::Magpie::Util::VERSION = '0.03';
+  $Test::Magpie::Util::VERSION = '0.04';
 }
 # ABSTRACT: Utilities used by Test::Magpie
 use strict;

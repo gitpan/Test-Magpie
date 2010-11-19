@@ -23,7 +23,6 @@ my %WriteMakefileArgs = (
     'Devel::PartialDump' => '0.13',
     'List::AllUtils' => '0.02',
     'Moose' => '1.14',
-    'MooseX::Params::Validate' => '0.14',
     'MooseX::Types::Moose' => '0.21',
     'MooseX::Types::Structured' => '0.21',
     'Set::Object' => '1.28',
@@ -34,7 +33,7 @@ my %WriteMakefileArgs = (
     'aliased' => '0.30',
     'namespace::autoclean' => '0.09'
   },
-  'VERSION' => '0.03',
+  'VERSION' => '0.04',
   'test' => {
     'TESTS' => 't/*.t'
   }

@@ -1,6 +1,6 @@
 package Test::Magpie::Spy;
 BEGIN {
-  $Test::Magpie::Spy::VERSION = '0.03';
+  $Test::Magpie::Spy::VERSION = '0.04';
 }
 # ABSTRACT: A look into the invocation history of a mock for verifaciotn
 use Moose;
@@ -28,8 +28,10 @@ sub BUILDARGS {
     my $self = shift;
     my %args = @_;
 
-    if (my $times = delete $args{times}) {
-        $args{invocation_counter} = sub { @_ == $times };
+    if (defined(my $times = delete $args{times})) {
+        $args{invocation_counter} = ref($times) eq 'CODE'
+            ? $times
+            : sub { @_ == $times };
     }
 
     return \%args;

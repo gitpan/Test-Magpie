@@ -1,6 +1,6 @@
 package Test::Magpie;
 BEGIN {
-  $Test::Magpie::VERSION = '0.03';
+  $Test::Magpie::VERSION = '0.04';
 }
 # ABSTRACT: Spy on objects to achieve test doubles (mock testing)
 use strict;
@@ -16,7 +16,10 @@ use MooseX::Params::Validate;
 use Test::Magpie::Types Mock => { -as => 'MockType' };
 
 use Sub::Exporter -setup => {
-    exports => [qw( inspect mock when verify )]
+    exports => [qw(
+        inspect mock when verify
+        at_least at_most
+    )]
 };
 
 sub verify {
@@ -42,6 +45,16 @@ sub inspect {
         { isa => MockType }
     );
     return Inspect->new(mock => $mock);
+}
+
+sub at_least {
+    my $n = shift;
+    return sub { @_ >= $n }
+}
+
+sub at_most {
+    my $n = shift;
+    return sub { @_ <= $n }
 }
 
 1;
@@ -124,9 +137,11 @@ C<%options> contains a few nice options to help make verification easier:
 
 =over 4
 
-=item times : Int
+=item times
 
-Makes sure that the given method was called C<times> times.
+Makes sure that the given method was called C<times> times. This may either be
+an integer, or it could be a bit more general, and specified using
+L<Test::Magpie/at_least> or L<Test::Magpie/at_most>
 
 =back
 
@@ -139,6 +154,19 @@ all the same methods), but a method call stores a stub method in the mock class,
 rather than an invocation. After specifying the method you wish to stub, you
 will be working with a L<Test::Magpie::Stub>, and you should consult that
 documentation for how to fully specify the stub.
+
+=head2 inspect($mock)
+
+Inspect method invocations on a mock object. See L<Test::Magpie::Inspect> for
+more information.
+
+=head2 at_least(Int $n)
+
+Verify that a method was invoked at least C<$n> times
+
+=head2 at_most(Int $n)
+
+Verify that a method was invoked at most C<$n> times
 
 =head1 AUTHOR
 

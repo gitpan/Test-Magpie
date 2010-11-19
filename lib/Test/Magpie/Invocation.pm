@@ -1,6 +1,6 @@
 package Test::Magpie::Invocation;
 BEGIN {
-  $Test::Magpie::Invocation::VERSION = '0.03';
+  $Test::Magpie::Invocation::VERSION = '0.04';
 }
 # ABSTRACT: Represents an invocation of a method
 use Moose;
@@ -20,9 +20,19 @@ __END__
 
 Test::Magpie::Invocation - Represents an invocation of a method
 
-=head1 INTERNAL
+=head1 DESCRIPTION
 
-This class is only meant for internal usage and has no public API
+An invocation of a method on a mock object
+
+=head1 ATTRIBUTES
+
+=head2 arguments
+
+Returns a list of all arguments passed to the method call.
+
+=head2 method_name
+
+The name of the method invoked;
 
 =head1 AUTHOR
 

@@ -1,6 +1,6 @@
 package Test::Magpie::Role::MethodCall;
 BEGIN {
-  $Test::Magpie::Role::MethodCall::VERSION = '0.03';
+  $Test::Magpie::Role::MethodCall::VERSION = '0.04';
 }
 # ABSTRACT: A role that represents a method call
 use Moose::Role;

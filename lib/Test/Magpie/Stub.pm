@@ -1,6 +1,6 @@
 package Test::Magpie::Stub;
 BEGIN {
-  $Test::Magpie::Stub::VERSION = '0.03';
+  $Test::Magpie::Stub::VERSION = '0.04';
 }
 # ABSTRACT: The declaration of a stubbed method
 use Moose;

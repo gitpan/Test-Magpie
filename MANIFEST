@@ -1,3 +1,4 @@
+Changes
 LICENSE
 MANIFEST
 META.json
@@ -19,6 +20,7 @@ lib/Test/Magpie/Types.pm
 lib/Test/Magpie/Util.pm
 lib/Test/Magpie/When.pm
 t/basic.t
+t/mockito_tutorial.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
