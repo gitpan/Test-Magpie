@@ -1,4 +1,7 @@
 package Test::Magpie::ArgumentMatcher;
+BEGIN {
+  $Test::Magpie::ArgumentMatcher::VERSION = '0.05';
+}
 # ABSTRACT: Various templates to catch arguments
 
 use strict;
@@ -64,6 +67,16 @@ sub type {
 
 1;
 
+
+__END__
+=pod
+
+=encoding utf-8
+
+=head1 NAME
+
+Test::Magpie::ArgumentMatcher - Various templates to catch arguments
+
 =head1 SYNOPSIS
 
     use Test::Magpie::ArgumentMatcher qw( anything );
@@ -97,19 +110,23 @@ though a single sub routine is normally all you will need.
 This module provides a set of common argument matchers, and will probably handle
 most of your needs. They are all available for import by name.
 
-=func anything
+=head1 METHODS
+
+=head2 match @in
+
+Match an argument matcher against @in, and return a list of parameters still to
+be consumed, or undef on validation.
+
+=head1 FUNCTIONS
+
+=head2 anything
 
 Consumes all remaining arguments (even 0) and returns none. This effectively
 slurps in any remaining arguments and considers them valid. Note, as this
 consumes I<all> arguments, you cannot use further argument validators after this
 one. You are, however, welcome to use them before.
 
-=method match @in
-
-Match an argument matcher against @in, and return a list of parameters still to
-be consumed, or undef on validation.
-
-=func custom_matcher { ...code.... }
+=head2 custom_matcher { ...code.... }
 
 Creates a custom argument matcher for you. This argument matcher is assumed to
 be the final argument matcher. If this matcher passes (that is, returns a true
@@ -119,18 +136,18 @@ Custom matchers are code references. You can use $_ to reference to the first
 argument, but a custom argument matcher may match more than one argument. It is
 passed the contents of C<@_> that have not yet been matched, in essence.
 
-=func type $type_constraint
+=head2 type $type_constraint
 
 Checks that a single value meets a given Moose type constraint. You may want to
 consider the use of L<MooseX::Types> here for code clarity.
 
-=func hash %match
+=head2 hash %match
 
 Does deep comparison on all remaining arguments, and verifies that they meet the
 specification in C<%match>. Note that this is for hashes, B<not> hash
 references!
 
-=func set @values
+=head2 set @values
 
 Compares that all remaining arguments match the set of values in C<@values>.
 This allows you to compare objects out of order.
@@ -140,4 +157,16 @@ duplicate arguments B<are ignored>. For example C<1, 1, 2> will match C<1, 2>,
 C<1, 2, 2>. This is probably a bug and I will fix it, but for now I'm mostly
 waiting for a bug report - sorry!
 
+=head1 AUTHOR
+
+Oliver Charles
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+

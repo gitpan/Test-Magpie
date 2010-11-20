@@ -1,4 +1,7 @@
 package Test::Magpie::Mock;
+BEGIN {
+  $Test::Magpie::Mock::VERSION = '0.05';
+}
 # ABSTRACT: A mock object
 use Moose -metaclass => 'Test::Magpie::Meta::Class';
 use namespace::autoclean;
@@ -62,6 +65,16 @@ sub isa {
 
 1;
 
+
+__END__
+=pod
+
+=encoding utf-8
+
+=head1 NAME
+
+Test::Magpie::Mock - A mock object
+
 =head1 DESCRIPTION
 
 Mock objects are the objects you pass around as if they were real objects. They
@@ -70,25 +83,41 @@ record mode - method calls and arguments will be saved. You can switch
 temporarily to stub and verification mode with C<when> and C<verify> in
 L<Test::Magpie>, respectively.
 
-=attr stubs
+=head1 ATTRIBUTES
+
+=head2 stubs
 
 This attribute is internal, and not publically accessible.
 
 Returns a map of method name to stub array references. Stubs are matched against
 invocation arguments to determine which stub to dispatch to.
 
-=attr invocations
+=head2 invocations
 
 This attribute is internal, and not publically accessible.
 
 Returns an array reference of all method invocations on this mock.
 
-=method isa $class
+=head1 METHODS
+
+=head2 isa $class
 
 Forced to return true for any package
 
-=method does $role
+=head2 does $role
 
 Forced to return true for any role
 
+=head1 AUTHOR
+
+Oliver Charles
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+

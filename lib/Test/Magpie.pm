@@ -1,4 +1,7 @@
 package Test::Magpie;
+BEGIN {
+  $Test::Magpie::VERSION = '0.05';
+}
 # ABSTRACT: Spy on objects to achieve test doubles (mock testing)
 use strict;
 use warnings;
@@ -56,6 +59,16 @@ sub at_most {
 
 1;
 
+
+__END__
+=pod
+
+=encoding utf-8
+
+=head1 NAME
+
+Test::Magpie - Spy on objects to achieve test doubles (mock testing)
+
 =head1 SYNOPSIS
 
     use Test::Magpie qw( mock verify when );
@@ -106,11 +119,13 @@ You can check equality between arguments, or consume a general type of argument,
 or consume multiple arguments. See L<Test::Magpie::ArgumentMatcher> for the
 juicy details.
 
-=func mock
+=head1 FUNCTIONS
+
+=head2 mock
 
 Construct a new instance of a mock object.
 
-=func verify($mock, [%options])
+=head2 verify($mock, [%options])
 
 Begin the verification process on a mock. Takes a mock object, and gives back a
 L<Test::Magpie::Spy>. You don't really need to be concerned about the API of
@@ -130,7 +145,7 @@ L<Test::Magpie/at_least> or L<Test::Magpie/at_most>
 
 =back
 
-=func when($mock)
+=head2 when($mock)
 
 Specify a stub method for C<$mock>.
 
@@ -140,17 +155,29 @@ rather than an invocation. After specifying the method you wish to stub, you
 will be working with a L<Test::Magpie::Stub>, and you should consult that
 documentation for how to fully specify the stub.
 
-=func inspect($mock)
+=head2 inspect($mock)
 
 Inspect method invocations on a mock object. See L<Test::Magpie::Inspect> for
 more information.
 
-=func at_least(Int $n)
+=head2 at_least(Int $n)
 
 Verify that a method was invoked at least C<$n> times
 
-=func at_most(Int $n)
+=head2 at_most(Int $n)
 
 Verify that a method was invoked at most C<$n> times
 
+=head1 AUTHOR
+
+Oliver Charles
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+

@@ -1,4 +1,7 @@
 package Test::Magpie::Role::MethodCall;
+BEGIN {
+  $Test::Magpie::Role::MethodCall::VERSION = '0.05';
+}
 # ABSTRACT: A role that represents a method call
 use Moose::Role;
 use namespace::autoclean;
@@ -50,28 +53,54 @@ sub satisfied_by {
 
 1;
 
-=head1 INTERNAL
 
-This class is internal and not meant for use outside Magpie.
+__END__
+=pod
 
-=method as_string
+=encoding utf-8
+
+=head1 NAME
+
+Test::Magpie::Role::MethodCall - A role that represents a method call
+
+=head1 ATTRIBUTES
+
+=head2 arguments
+
+An array reference of arguments, or argument matchers.
+
+=head2 method_name
+
+The name of the method.
+
+=head1 METHODS
+
+=head2 as_string
 
 Stringifies this method call to something that roughly resembles what you'd type
 in Perl.
 
-=method satisfied_by (MethodCall $invocation)
+=head2 satisfied_by (MethodCall $invocation)
 
 Returns true if the given $invocation would satisfy this method call. Note that
 while the $invocation could have arguments matchers in C<arguments>, they will
 be passed into this method calls argument matcher. Which basically means, it
 probably won't work.
 
-=attr arguments
+=head1 INTERNAL
 
-An array reference of arguments, or argument matchers.
+This class is internal and not meant for use outside Magpie.
 
-=attr method_name
+=head1 AUTHOR
 
-The name of the method.
+Oliver Charles
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
+

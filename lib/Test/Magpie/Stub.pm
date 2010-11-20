@@ -1,4 +1,7 @@
 package Test::Magpie::Stub;
+BEGIN {
+  $Test::Magpie::Stub::VERSION = '0.05';
+}
 # ABSTRACT: The declaration of a stubbed method
 use Moose;
 
@@ -52,6 +55,17 @@ sub then_die {
 
 1;
 
+
+
+__END__
+=pod
+
+=encoding utf-8
+
+=head1 NAME
+
+Test::Magpie::Stub - The declaration of a stubbed method
+
 =head1 DESCRIPTION
 
 Represents a stub method - a method that may have some sort of action when
@@ -64,23 +78,38 @@ Stub methods have a stack of executions. Every time the stub method is called
 and called. As stubs are matched via arguments, you may have multiple stubs for
 the same method name.
 
-=method then_return $return_value
+=head1 ATTRIBUTES
+
+=head2 executions
+
+An array reference queue of all stub executions. Internal.
+
+=head1 METHODS
+
+=head2 then_return $return_value
 
 Pushes a stub method that will return $return_value to the end of the execution
 queue.
 
-=method then_die $exception
+=head2 then_die $exception
 
 Pushes a stub method that will throw C<$exception> when called to the end of the
 execution stack.
 
-=method execute
+=head2 execute
 
 Internal. Will execute the next execution, if possible
 
-=attr executions
+=head1 AUTHOR
 
-An array reference queue of all stub executions. Internal.
+Oliver Charles
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
