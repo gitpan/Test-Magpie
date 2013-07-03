@@ -1,6 +1,6 @@
 package Test::Magpie::Stub;
-BEGIN {
-  $Test::Magpie::Stub::VERSION = '0.05';
+{
+  $Test::Magpie::Stub::VERSION = '0.06';
 }
 # ABSTRACT: The declaration of a stubbed method
 use Moose;
@@ -55,9 +55,8 @@ sub then_die {
 
 1;
 
-
-
 __END__
+
 =pod
 
 =encoding utf-8
@@ -106,10 +105,9 @@ Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

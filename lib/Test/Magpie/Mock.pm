@@ -1,6 +1,6 @@
 package Test::Magpie::Mock;
-BEGIN {
-  $Test::Magpie::Mock::VERSION = '0.05';
+{
+  $Test::Magpie::Mock::VERSION = '0.06';
 }
 # ABSTRACT: A mock object
 use Moose -metaclass => 'Test::Magpie::Meta::Class';
@@ -9,12 +9,19 @@ use namespace::autoclean;
 use aliased 'Test::Magpie::Invocation';
 use aliased 'Test::Magpie::Stub';
 
-use Test::Magpie::Util qw( extract_method_name );
+use Test::Magpie::Util qw( extract_method_name has_caller_package );
 use List::AllUtils qw( first );
 use MooseX::Types::Moose qw( ArrayRef Int Object Str );
 use MooseX::Types::Structured qw( Map );
 use Moose::Util qw( find_meta );
 use Test::Builder;
+use UNIVERSAL::ref;
+
+has 'class' => (
+    isa => Str,
+    is => 'ro',
+    default => __PACKAGE__,
+);
 
 has 'invocations' => (
     isa => ArrayRef,
@@ -57,16 +64,26 @@ sub AUTOLOAD {
     }
 }
 
-sub does { 1 }
+sub does {
+    return if has_caller_package('UNIVERSAL::ref');
+    return 1;
+}
+
 sub isa {
     my ($self, $package) = @_;
-    return !($package =~ /^Class::MOP::*/);
+    return if (
+        has_caller_package('UNIVERSAL::ref') ||
+        $package =~ /^Class::MOP::*/
+    );
+    return 1;
 }
+
+sub ref { $_[0]->class }
 
 1;
 
-
 __END__
+
 =pod
 
 =encoding utf-8
@@ -84,6 +101,12 @@ temporarily to stub and verification mode with C<when> and C<verify> in
 L<Test::Magpie>, respectively.
 
 =head1 ATTRIBUTES
+
+=head2 class
+
+This attribute is the name of the class that the object is pretending to be
+blessed into. This is only needed if you call C<ref()> on the object and want
+it to return a particular type.
 
 =head2 stubs
 
@@ -108,16 +131,20 @@ Forced to return true for any package
 
 Forced to return true for any role
 
+=head2 ref
+
+Returns the value of the object's C<class> attribute. This also works if you
+call C<ref()> as a function instead of a method.
+
 =head1 AUTHOR
 
 Oliver Charles
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
