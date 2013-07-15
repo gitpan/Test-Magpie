@@ -1,6 +1,6 @@
 package Test::Magpie::Role::MethodCall;
 {
-  $Test::Magpie::Role::MethodCall::VERSION = '0.06';
+  $Test::Magpie::Role::MethodCall::VERSION = '0.07';
 }
 # ABSTRACT: A role that represents a method call
 use Moose::Role;
@@ -8,8 +8,8 @@ use namespace::autoclean;
 
 use aliased 'Test::Magpie::ArgumentMatcher';
 
-use MooseX::Types::Moose qw( ArrayRef Str );
 use Devel::PartialDump;
+use MooseX::Types::Moose qw( ArrayRef Str );
 use Test::Magpie::Util qw( match );
 
 has 'method_name' => (
@@ -35,10 +35,12 @@ sub as_string {
 
 sub satisfied_by {
     my ($self, $invocation) = @_;
+
     return unless $invocation->method_name eq $self->method_name;
+
     my @input = $invocation->arguments;
     my @expected = $self->arguments;
-    while(@input && @expected) {
+    while (@input && @expected) {
         my $matcher = shift(@expected);
         if (ref($matcher) eq ArgumentMatcher) {
             @input = $matcher->match(@input);
@@ -91,13 +93,23 @@ probably won't work.
 
 This class is internal and not meant for use outside Magpie.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Oliver Charles
+=over 4
+
+=item *
+
+Oliver Charles <oliver.g.charles@googlemail.com>
+
+=item *
+
+Steven Lee <stevenwh.lee@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

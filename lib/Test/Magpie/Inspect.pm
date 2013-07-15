@@ -1,6 +1,6 @@
 package Test::Magpie::Inspect;
 {
-  $Test::Magpie::Inspect::VERSION = '0.06';
+  $Test::Magpie::Inspect::VERSION = '0.07';
 }
 # ABSTRACT: Inspect invocations of methods on mocks
 use Moose;
@@ -12,8 +12,7 @@ use MooseX::Types::Moose qw( Int Str );
 use MooseX::Types::Structured qw( Map );
 
 use List::AllUtils qw( first );
-use Moose::Util qw( find_meta );
-use Test::Magpie::Util qw( extract_method_name );
+use Test::Magpie::Util qw( extract_method_name get_attribute_value );
 
 with 'Test::Magpie::Role::HasMock';
 
@@ -22,19 +21,18 @@ sub AUTOLOAD {
     my $self = shift;
     my $method_name = extract_method_name($AUTOLOAD);
 
-    my $meta = find_meta($self);
-    my $mock = $meta->find_attribute_by_name('mock')->get_value($self);
-    my $invocations = find_meta($mock)->find_attribute_by_name('invocations')
-        ->get_value($mock);
-
     my $inspect = Invocation->new(
         method_name => $method_name,
-        arguments => \@_
+        arguments   => \@_,
     );
+
+    my $mock = get_attribute_value($self, 'mock');
+    my $invocations = get_attribute_value($mock, 'invocations');
 
     return first { $inspect->satisfied_by($_) } @$invocations;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
 
 __END__
@@ -66,13 +64,23 @@ When a method is called, we see if any invocation matches it's name and argument
 specification (inspectors can use argument matchers), and if so - return that
 invocation as a L<Test::Magpie::Invocation>. Otherwise, C<undef> is returned.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Oliver Charles
+=over 4
+
+=item *
+
+Oliver Charles <oliver.g.charles@googlemail.com>
+
+=item *
+
+Steven Lee <stevenwh.lee@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

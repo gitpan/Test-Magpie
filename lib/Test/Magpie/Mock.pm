@@ -1,6 +1,6 @@
 package Test::Magpie::Mock;
 {
-  $Test::Magpie::Mock::VERSION = '0.06';
+  $Test::Magpie::Mock::VERSION = '0.07';
 }
 # ABSTRACT: A mock object
 use Moose -metaclass => 'Test::Magpie::Meta::Class';
@@ -9,56 +9,57 @@ use namespace::autoclean;
 use aliased 'Test::Magpie::Invocation';
 use aliased 'Test::Magpie::Stub';
 
-use Test::Magpie::Util qw( extract_method_name has_caller_package );
-use List::AllUtils qw( first );
-use MooseX::Types::Moose qw( ArrayRef Int Object Str );
+use Test::Magpie::Util qw(
+    extract_method_name
+    get_attribute_value
+    has_caller_package
+);
+
+use MooseX::Types::Moose qw( ArrayRef Int Str );
 use MooseX::Types::Structured qw( Map );
-use Moose::Util qw( find_meta );
-use Test::Builder;
 use UNIVERSAL::ref;
 
 has 'class' => (
     isa => Str,
-    is => 'ro',
+    reader => 'ref',
     default => __PACKAGE__,
 );
 
 has 'invocations' => (
-    isa => ArrayRef,
+    isa => ArrayRef[Invocation],
     is => 'bare',
     default => sub { [] }
 );
 
 has 'stubs' => (
-    isa => Map[Str, Object],
+    isa => Map[ Str, ArrayRef[Stub] ],
     is => 'bare',
     default => sub { {} }
 );
 
 our $AUTOLOAD;
-
 sub AUTOLOAD {
-    my $method = $AUTOLOAD;
     my $self = shift;
-    my $meta = find_meta($self);
-    my $invocations = $meta->find_attribute_by_name('invocations')
-        ->get_value($self);
-    my $invocation = Invocation->new(
-        method_name => extract_method_name($method),
-        arguments => \@_
+    my $method_name = extract_method_name($AUTOLOAD);
+
+    # record the method invocation for verification
+    my $invocation  = Invocation->new(
+        method_name => $method_name,
+        arguments   => \@_,
     );
 
+    my $invocations = get_attribute_value($self, 'invocations');
     push @$invocations, $invocation;
 
-    if(my $stubs = $meta->find_attribute_by_name('stubs')->get_value($self)->{
-        $invocation->method_name
-    }) {
-        my $stub_meta = find_meta(Stub);
-        my @possible = grep { $_->satisfied_by($invocation) } @$stubs;
-        for my $stub (@possible) {
-            if ($stub->_has_executions) {
-                return $stub->execute;
-            }
+    # find a stub to return a response
+    if (
+        my $stubs = get_attribute_value($self, 'stubs')->{ $method_name }
+    ) {
+        for my $stub (@$stubs) {
+            return $stub->execute if (
+                $stub->satisfied_by($invocation) &&
+                $stub->_has_executions
+            );
         }
         return;
     }
@@ -78,8 +79,7 @@ sub isa {
     return 1;
 }
 
-sub ref { $_[0]->class }
-
+__PACKAGE__->meta->make_immutable;
 1;
 
 __END__
@@ -136,13 +136,23 @@ Forced to return true for any role
 Returns the value of the object's C<class> attribute. This also works if you
 call C<ref()> as a function instead of a method.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Oliver Charles
+=over 4
+
+=item *
+
+Oliver Charles <oliver.g.charles@googlemail.com>
+
+=item *
+
+Steven Lee <stevenwh.lee@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

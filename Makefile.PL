@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-
+use 5.010_001;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker 6.30;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Spy on objects to achieve test doubles (mock testing)\r",
-  "AUTHOR" => "Oliver Charles",
+  "AUTHOR" => "Oliver Charles <oliver.g.charles\@googlemail.com>, Steven Lee <stevenwh.lee\@gmail.com>",
   "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
@@ -20,25 +20,36 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Test::Magpie",
   "PREREQ_PM" => {
-    "Devel::PartialDump" => "0.13",
-    "List::AllUtils" => "0.02",
-    "Moose" => "1.14",
-    "MooseX::Params::Validate" => 0,
-    "MooseX::Types::Moose" => "0.21",
-    "MooseX::Types::Structured" => "0.21",
-    "Set::Object" => "1.28",
-    "Sub::Exporter" => "0.982",
-    "Test::Builder" => "0.96",
-    "UNIVERSAL::ref" => "0.12",
-    "aliased" => "0.30",
-    "namespace::autoclean" => "0.09"
+    "Carp" => 0,
+    "Devel::PartialDump" => 0,
+    "List::AllUtils" => 0,
+    "Moose" => 0,
+    "Moose::Meta::Class" => 0,
+    "Moose::Role" => 0,
+    "Moose::Util" => 0,
+    "MooseX::Types" => 0,
+    "MooseX::Types::Moose" => 0,
+    "MooseX::Types::Structured" => 0,
+    "Scalar::Util" => 0,
+    "Set::Object" => 0,
+    "Sub::Exporter" => 0,
+    "Test::Builder" => 0,
+    "UNIVERSAL::ref" => 0,
+    "aliased" => 0,
+    "namespace::autoclean" => 0,
+    "strict" => 0,
+    "warnings" => 0
   },
   "TEST_REQUIRES" => {
-    "Test::Fatal" => "0.003",
+    "Test::Builder::Tester" => 0,
+    "Test::Fatal" => 0,
     "Test::Moose" => 0,
-    "Test::More" => "0.96"
+    "Test::More" => 0,
+    "Throwable" => 0,
+    "constant" => 0,
+    "overload" => 0
   },
-  "VERSION" => "0.06",
+  "VERSION" => "0.07",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -1,6 +1,6 @@
 package Test::Magpie;
 {
-  $Test::Magpie::VERSION = '0.06';
+  $Test::Magpie::VERSION = '0.07';
 }
 # ABSTRACT: Spy on objects to achieve test doubles (mock testing)
 use strict;
@@ -11,9 +11,9 @@ use aliased 'Test::Magpie::Mock';
 use aliased 'Test::Magpie::Spy';
 use aliased 'Test::Magpie::When';
 
-use Moose::Util qw( find_meta ensure_all_roles );
-use MooseX::Params::Validate;
-use Test::Magpie::Types Mock => { -as => 'MockType' };
+use Carp qw( croak );
+use Scalar::Util qw( looks_like_number );
+use Test::Magpie::Types 'NumRange', Mock => { -as => 'MockType' };
 
 use Sub::Exporter -setup => {
     exports => [qw(
@@ -22,44 +22,99 @@ use Sub::Exporter -setup => {
     )]
 };
 
-sub verify {
-    my $mock = shift;
-    return Spy->new(mock => $mock, @_);
+sub inspect {
+    my ($mock) = @_;
+
+    croak 'inspect() must be given a mock object'
+        unless defined $mock && MockType->check($mock);
+
+    return Inspect->new(mock => $mock);
 }
 
 sub mock {
     return Mock->new if @_ == 0;
 
-    my $class;
-    $class = shift if @_ % 2;
-    my %opts = @_;
-    $opts{class} = $class if defined $class;
+    my ($class) = @_;
 
-    return Mock->new(\%opts);
+    croak 'The argument for mock() must be a string'
+        unless !ref $class;
+
+    return Mock->new(class => $class);
+}
+
+sub verify {
+    my ($mock, %options) = @_;
+    my @options = qw( times at_least at_most between );
+    my @used_options = grep { defined $options{$_} } @options;
+
+    croak 'verify() must be given a mock object'
+        unless defined $mock && MockType->check($mock);
+
+    croak 'You can set only one of these options: '
+        . join ', ', map {"'$_'"} @options
+        unless scalar @used_options <= 1;
+
+    if (defined $options{times}) {
+        croak "'times' option must be a number" unless (
+            looks_like_number $options{times} ||
+            ref $options{times} eq 'CODE'
+        );
+    }
+    elsif (defined $options{at_least}) {
+        croak "'at_least' option must be a number"
+            unless looks_like_number $options{at_least};
+    }
+    elsif (defined $options{at_most}) {
+        croak "'at_most' option must be a number"
+            unless looks_like_number $options{at_most};
+    }
+    elsif (defined $options{between}) {
+        croak "'between' option must be an arrayref "
+            . "with 2 numbers in ascending order" unless (
+            NumRange->check( $options{between} ) &&
+            $options{between}[0] < $options{between}[1]
+        );
+    }
+
+    # set default option
+    $options{times} = 1 if @used_options == 0;
+
+    return Spy->new(mock => $mock, %options);
 }
 
 sub when {
-    my ($mock) = pos_validated_list(\@_,
-        { isa => MockType }
-    );
+    my ($mock) = @_;
+
+    croak 'when() must be given a mock object'
+        unless defined $mock && MockType->check($mock);
+
     return When->new(mock => $mock);
 }
 
-sub inspect {
-    my ($mock) = pos_validated_list(\@_,
-        { isa => MockType }
-    );
-    return Inspect->new(mock => $mock);
-}
-
 sub at_least {
-    my $n = shift;
-    return sub { @_ >= $n }
+    warnings::warnif('deprecated', 'at_least() is deprecated');
+
+    my ($n) = @_;
+    croak "at_least() must be given a number"
+        unless ! defined $n || looks_like_number $n;
+
+    return sub {
+        my ($invocations, $name, $tb) = @_;
+        $tb->cmp_ok($invocations, '>=', $n, $name);
+    }
 }
 
 sub at_most {
-    my $n = shift;
-    return sub { @_ <= $n }
+    warnings::warnif('deprecated', 'at_most() is deprecated');
+
+    my ($n) = @_;
+    croak "at_most() must be given a number"
+        unless ! defined $n || looks_like_number $n;
+
+    return sub {
+        my ($invocations, $name, $tb) = @_;
+        $tb->cmp_ok($invocations, '<=', $n, $name);
+    }
 }
 
 1;
@@ -147,9 +202,29 @@ C<%options> contains a few nice options to help make verification easier:
 
 =item times
 
-Makes sure that the given method was called C<times> times. This may either be
-an integer, or it could be a bit more general, and specified using
-L<Test::Magpie/at_least> or L<Test::Magpie/at_most>
+    verify($mock, times => 3)->method
+
+Specifies the number of times the given method is expected to be called. The
+default is 1 if no other option is specified.
+
+=item at_least
+
+    verify($mock, at_least => 3)->method
+
+Specifies the minimum number of times the given method is expected to be called.
+
+=item at_most
+
+    verify($mock, at_most => 5)->method
+
+Specifies the maximum number of times the given method is expected to be called.
+
+=item between
+
+    verify($mock, between => [3, 5])->method
+
+Specifies the minimum and maximum number of times the given method is expected
+to be called.
 
 =back
 
@@ -176,13 +251,23 @@ Verify that a method was invoked at least C<$n> times
 
 Verify that a method was invoked at most C<$n> times
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Oliver Charles
+=over 4
+
+=item *
+
+Oliver Charles <oliver.g.charles@googlemail.com>
+
+=item *
+
+Steven Lee <stevenwh.lee@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

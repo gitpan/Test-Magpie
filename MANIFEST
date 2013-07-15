@@ -19,9 +19,14 @@ lib/Test/Magpie/Stub.pm
 lib/Test/Magpie/Types.pm
 lib/Test/Magpie/Util.pm
 lib/Test/Magpie/When.pm
-t/basic.t
+t/argument_matcher.t
+t/inspect.t
+t/invocation.t
+t/mock.t
 t/mockito_tutorial.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/roles.t
+t/verify_spy.t
+t/when_stub.t

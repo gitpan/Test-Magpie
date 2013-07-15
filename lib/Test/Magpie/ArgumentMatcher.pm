@@ -1,6 +1,6 @@
 package Test::Magpie::ArgumentMatcher;
 {
-  $Test::Magpie::ArgumentMatcher::VERSION = '0.06';
+  $Test::Magpie::ArgumentMatcher::VERSION = '0.07';
 }
 # ABSTRACT: Various templates to catch arguments
 
@@ -19,6 +19,14 @@ use Sub::Exporter -setup => {
 
 sub anything {
     bless sub { return () }, __PACKAGE__;
+}
+
+sub custom_matcher (&;) {
+    my $test = shift;
+    bless sub {
+        local $_ = $_[0];
+        $test->(@_) ? () : undef
+    }, __PACKAGE__;
 }
 
 sub hash {
@@ -47,14 +55,6 @@ sub _set {
 sub match {
     my ($self, @input) = @_;
     return $self->(@input);
-}
-
-sub custom_matcher (&;) {
-    my $test = shift;
-    bless sub {
-        local $_ = $_[0];
-        $test->(@_) ? () : undef
-    }, __PACKAGE__;
 }
 
 sub type {
@@ -157,13 +157,23 @@ duplicate arguments B<are ignored>. For example C<1, 1, 2> will match C<1, 2>,
 C<1, 2, 2>. This is probably a bug and I will fix it, but for now I'm mostly
 waiting for a bug report - sorry!
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Oliver Charles
+=over 4
+
+=item *
+
+Oliver Charles <oliver.g.charles@googlemail.com>
+
+=item *
+
+Steven Lee <stevenwh.lee@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

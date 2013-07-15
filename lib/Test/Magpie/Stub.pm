@@ -1,11 +1,11 @@
 package Test::Magpie::Stub;
 {
-  $Test::Magpie::Stub::VERSION = '0.06';
+  $Test::Magpie::Stub::VERSION = '0.07';
 }
 # ABSTRACT: The declaration of a stubbed method
 use Moose;
+use namespace::autoclean;
 
-use List::AllUtils qw( all pairwise );
 use MooseX::Types::Moose qw( ArrayRef );
 use Scalar::Util qw( blessed );
 
@@ -24,10 +24,9 @@ has 'executions' => (
 
 sub execute {
     my $self = shift;
-    if(my $code = $self->_next_execution) {
-        return $code->();
-    }
-    return;
+    #$self->_has_executions || confess "Stub has no more executions";
+
+    return ( $self->_next_execution )->();
 }
 
 sub then_return {
@@ -53,6 +52,7 @@ sub then_die {
     return $self;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
 
 __END__
@@ -99,13 +99,23 @@ execution stack.
 
 Internal. Will execute the next execution, if possible
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Oliver Charles
+=over 4
+
+=item *
+
+Oliver Charles <oliver.g.charles@googlemail.com>
+
+=item *
+
+Steven Lee <stevenwh.lee@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

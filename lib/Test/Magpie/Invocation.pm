@@ -1,12 +1,14 @@
 package Test::Magpie::Invocation;
 {
-  $Test::Magpie::Invocation::VERSION = '0.06';
+  $Test::Magpie::Invocation::VERSION = '0.07';
 }
 # ABSTRACT: Represents an invocation of a method
 use Moose;
+use namespace::autoclean;
 
 with 'Test::Magpie::Role::MethodCall';
 
+__PACKAGE__->meta->make_immutable;
 1;
 
 __END__
@@ -33,13 +35,23 @@ Returns a list of all arguments passed to the method call.
 
 The name of the method invoked;
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Oliver Charles
+=over 4
+
+=item *
+
+Oliver Charles <oliver.g.charles@googlemail.com>
+
+=item *
+
+Steven Lee <stevenwh.lee@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Oliver Charles <oliver.g.charles@googlemail.com>.
+This software is copyright (c) 2013 by Oliver Charles.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
