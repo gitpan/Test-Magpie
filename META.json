@@ -45,8 +45,9 @@
             "Test::Builder" : "0",
             "UNIVERSAL::ref" : "0",
             "aliased" : "0",
+            "if" : "0",
             "namespace::autoclean" : "0",
-            "perl" : "5.010_001",
+            "perl" : "5.010",
             "strict" : "0",
             "warnings" : "0"
          }
@@ -64,12 +65,28 @@
       }
    },
    "release_status" : "stable",
-   "version" : "0.07",
+   "resources" : {
+      "bugtracker" : {
+         "mailto" : "bug-Test-Magpie@rt.cpan.org",
+         "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=Test-Magpie"
+      },
+      "repository" : {
+         "type" : "git",
+         "url" : "http://github.com/ocharles/Test-Magpie.git",
+         "web" : "http://github.com/ocharles/Test-Magpie"
+      }
+   },
+   "version" : "0.08",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018000"
       },
       "plugins" : [
+         {
+            "class" : "Dist::Zilla::Plugin::MetaResources",
+            "name" : "MetaResources",
+            "version" : "4.300034"
+         },
          {
             "class" : "Dist::Zilla::Plugin::GatherDir",
             "name" : "@Filter/GatherDir",
@@ -141,6 +158,11 @@
             "version" : "4.300034"
          },
          {
+            "class" : "Dist::Zilla::Plugin::AutoPrereqs",
+            "name" : "AutoPrereqs",
+            "version" : "4.300034"
+         },
+         {
             "class" : "Dist::Zilla::Plugin::MetaConfig",
             "name" : "MetaConfig",
             "version" : "4.300034"
@@ -154,6 +176,11 @@
             "class" : "Dist::Zilla::Plugin::PkgVersion",
             "name" : "PkgVersion",
             "version" : "4.300034"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::PodWeaver",
+            "name" : "PodWeaver",
+            "version" : "3.101641"
          },
          {
             "class" : "Dist::Zilla::Plugin::PodSyntaxTests",
@@ -189,16 +216,6 @@
             "class" : "Dist::Zilla::Plugin::Git::Push",
             "name" : "@Git/Push",
             "version" : "2.014"
-         },
-         {
-            "class" : "Dist::Zilla::Plugin::PodWeaver",
-            "name" : "PodWeaver",
-            "version" : "3.101641"
-         },
-         {
-            "class" : "Dist::Zilla::Plugin::AutoPrereqs",
-            "name" : "AutoPrereqs",
-            "version" : "4.300034"
          },
          {
             "class" : "Dist::Zilla::Plugin::FinderCode",

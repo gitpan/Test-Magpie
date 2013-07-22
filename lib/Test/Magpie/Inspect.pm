@@ -1,6 +1,6 @@
 package Test::Magpie::Inspect;
 {
-  $Test::Magpie::Inspect::VERSION = '0.07';
+  $Test::Magpie::Inspect::VERSION = '0.08';
 }
 # ABSTRACT: Inspect invocations of methods on mocks
 use Moose;

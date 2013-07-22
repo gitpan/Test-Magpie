@@ -1,15 +1,17 @@
 package Test::Magpie::Util;
 {
-  $Test::Magpie::Util::VERSION = '0.07';
+  $Test::Magpie::Util::VERSION = '0.08';
 }
-# ABSTRACT: Utilities used by Test::Magpie
+# ABSTRACT: Internal utility functions for Test::Magpie
+
 use strict;
 use warnings;
-use 5.010_001; # dependency for smartmatching
 
-use aliased 'Test::Magpie::ArgumentMatcher';
+# smartmatch dependencies
+use 5.010;
+no if $] >= 5.017011, warnings => 'experimental::smartmatch';
 
-use Scalar::Util qw( blessed );
+use Scalar::Util qw( blessed looks_like_number refaddr );
 use Moose::Util qw( find_meta );
 
 use Sub::Exporter -setup => {
@@ -21,11 +23,13 @@ use Sub::Exporter -setup => {
     )],
 };
 
+
 sub extract_method_name {
-    my $name = shift;
-    my ($method) = $name =~ qr/:([^:]+)$/;
-    return $method;
+    my ($method_name) = @_;
+    $method_name =~ s/.*:://;
+    return $method_name;
 }
+
 
 sub get_attribute_value {
     my ($object, $attribute) = @_;
@@ -34,6 +38,7 @@ sub get_attribute_value {
         ->find_attribute_by_name($attribute)
         ->get_value($object);
 }
+
 
 sub has_caller_package {
     my $package= shift;
@@ -45,11 +50,49 @@ sub has_caller_package {
     return;
 }
 
+
 sub match {
     my ($a, $b) = @_;
-    return blessed($a)
-        ? (ref($a) eq ref($b) && $a == $b)
-        : $a ~~ $b;
+
+    # This function uses smart matching, but we need to limit the scenarios
+    # in which it is used because of its quirks.
+
+    # ref types must match
+    return if ref($a) ne ref($b);
+
+    # objects match only if they are the same object
+    if (blessed($a) || ref($a) eq 'CODE') {
+        return refaddr($a) == refaddr($b);
+    }
+
+    # don't smartmatch on arrays because it recurses
+    # which leads to the same quirks that we want to avoid
+    if (ref($a) eq 'ARRAY') {
+        return if $#{$a} != $#{$b};
+
+        # recurse to handle nested structures
+        foreach (0 .. $#{$a}) {
+            return if !match( $a->[$_], $b->[$_] );
+        }
+        return 1;
+    }
+
+    # smartmatch only matches hash keys
+    # but we want to match the values too
+    if (ref($a) eq 'HASH') {
+        return unless $a ~~ $b;
+
+        foreach (keys %$a) {
+            return if !match( $a->{$_}, $b->{$_} );
+        }
+        return 1;
+    }
+
+    # avoid smartmatch doing number matches on strings
+    # e.g. '5x' ~~ 5 is true
+    return if looks_like_number($a) xor looks_like_number($b);
+
+    return $a ~~ $b;
 }
 
 1;
@@ -62,7 +105,7 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Util - Utilities used by Test::Magpie
+Test::Magpie::Util - Internal utility functions for Test::Magpie
 
 =head1 FUNCTIONS
 
@@ -70,25 +113,27 @@ Test::Magpie::Util - Utilities used by Test::Magpie
 
     $method_name = extract_method_name($full_method_name)
 
-Internal. From a fully qualified method name such as Foo::Bar::baz, will return
+From a fully qualified method name such as Foo::Bar::baz, will return
 just the method name (in this example, baz).
-
-=head2 has_caller_package
-
-    $bool = has_caller_package($package_name)
-
-Internal. Returns whether the given C<$package> is in the current call stack.
 
 =head2 get_attribute_value
 
     $value = get_attribute_value($object, $attr_name)
 
-Internal. Gets value of Moose attributes that have no accessors by accessing
-the class' underlying meta-object.
+Gets value of Moose attributes that have no accessors by accessing the class'
+underlying meta-object.
+
+=head2 has_caller_package
+
+    $bool = has_caller_package($package_name)
+
+Returns whether the given C<$package> is in the current call stack.
 
 =head2 match
 
-Internal. Match 2 values for equality
+    $bool = match($a, $b)
+
+Match 2 values for equality.
 
 =head1 AUTHORS
 

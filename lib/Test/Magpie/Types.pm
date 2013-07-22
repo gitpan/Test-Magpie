@@ -1,6 +1,6 @@
 package Test::Magpie::Types;
 {
-  $Test::Magpie::Types::VERSION = '0.07';
+  $Test::Magpie::Types::VERSION = '0.08';
 }
 # ABSTRACT: Type constraints used by Magpie
 use MooseX::Types -declare => [qw( Mock NumRange )];

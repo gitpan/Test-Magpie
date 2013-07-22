@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use 5.010_001;
+use 5.010;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -36,6 +36,7 @@ my %WriteMakefileArgs = (
     "Test::Builder" => 0,
     "UNIVERSAL::ref" => 0,
     "aliased" => 0,
+    "if" => 0,
     "namespace::autoclean" => 0,
     "strict" => 0,
     "warnings" => 0
@@ -49,7 +50,7 @@ my %WriteMakefileArgs = (
     "constant" => 0,
     "overload" => 0
   },
-  "VERSION" => "0.07",
+  "VERSION" => "0.08",
   "test" => {
     "TESTS" => "t/*.t"
   }

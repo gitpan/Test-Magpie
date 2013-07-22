@@ -1,6 +1,6 @@
 package Test::Magpie::Invocation;
 {
-  $Test::Magpie::Invocation::VERSION = '0.07';
+  $Test::Magpie::Invocation::VERSION = '0.08';
 }
 # ABSTRACT: Represents an invocation of a method
 use Moose;

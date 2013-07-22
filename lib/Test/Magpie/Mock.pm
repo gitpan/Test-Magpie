@@ -1,10 +1,12 @@
 package Test::Magpie::Mock;
 {
-  $Test::Magpie::Mock::VERSION = '0.07';
+  $Test::Magpie::Mock::VERSION = '0.08';
 }
-# ABSTRACT: A mock object
+# ABSTRACT: Mock objects
+
 use Moose -metaclass => 'Test::Magpie::Meta::Class';
 use namespace::autoclean;
+
 
 use aliased 'Test::Magpie::Invocation';
 use aliased 'Test::Magpie::Stub';
@@ -19,11 +21,15 @@ use MooseX::Types::Moose qw( ArrayRef Int Str );
 use MooseX::Types::Structured qw( Map );
 use UNIVERSAL::ref;
 
+our $AUTOLOAD;
+
+
 has 'class' => (
     isa => Str,
     reader => 'ref',
     default => __PACKAGE__,
 );
+
 
 has 'invocations' => (
     isa => ArrayRef[Invocation],
@@ -31,13 +37,13 @@ has 'invocations' => (
     default => sub { [] }
 );
 
+
 has 'stubs' => (
     isa => Map[ Str, ArrayRef[Stub] ],
     is => 'bare',
     default => sub { {} }
 );
 
-our $AUTOLOAD;
 sub AUTOLOAD {
     my $self = shift;
     my $method_name = extract_method_name($AUTOLOAD);
@@ -61,14 +67,10 @@ sub AUTOLOAD {
                 $stub->_has_executions
             );
         }
-        return;
     }
+    return;
 }
 
-sub does {
-    return if has_caller_package('UNIVERSAL::ref');
-    return 1;
-}
 
 sub isa {
     my ($self, $package) = @_;
@@ -77,6 +79,22 @@ sub isa {
         $package =~ /^Class::MOP::*/
     );
     return 1;
+}
+
+
+sub does {
+    return if has_caller_package('UNIVERSAL::ref');
+    return 1;
+}
+
+
+
+sub can {
+    my ($self, $method_name) = @_;
+    return sub {
+        $AUTOLOAD = $method_name;
+        goto &AUTOLOAD;
+    };
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -90,51 +108,93 @@ __END__
 
 =head1 NAME
 
-Test::Magpie::Mock - A mock object
+Test::Magpie::Mock - Mock objects
+
+=head1 SYNOPSIS
+
+    # create a mock object
+    my $mock = mock(); # from Test::Magpie
+    my $mock_with_class = mock('AnyRef');
+
+    # mock objects pretend to be anything you want them to be
+    $true = $mock->isa('AnyClass');
+    $true = $mock->does('AnyRole');
+    $true = $mock->DOES('AnyRole');
+    $ref  = ref($mock_with_class); # AnyRef
+
+    # call any method with any arguments
+    $method_ref = $mock->can('any_method');
+    $mock->any_method(@arguments);
 
 =head1 DESCRIPTION
 
 Mock objects are the objects you pass around as if they were real objects. They
-do not have a defined API; any method call is valid. A mock on its own is in
-record mode - method calls and arguments will be saved. You can switch
-temporarily to stub and verification mode with C<when> and C<verify> in
-L<Test::Magpie>, respectively.
+do not have a defined API; any method may be called. Additionally, you can
+create stubs to specify responses (return values or exceptions) to method
+calls.
+
+A mock objects records every method called on it along with their arguments.
+These records may then be used for verifying that the correct interactions
+occured.
 
 =head1 ATTRIBUTES
 
 =head2 class
 
-This attribute is the name of the class that the object is pretending to be
-blessed into. This is only needed if you call C<ref()> on the object and want
-it to return a particular type.
-
-=head2 stubs
-
-This attribute is internal, and not publically accessible.
-
-Returns a map of method name to stub array references. Stubs are matched against
-invocation arguments to determine which stub to dispatch to.
+The name of the class that the object is pretending to be blessed into. Calling
+C<ref()> on the mock object will return this class name.
 
 =head2 invocations
 
+An array reference containing a record of all methods invoked on this mock.
+These are used for verification and inspection.
+
 This attribute is internal, and not publically accessible.
 
-Returns an array reference of all method invocations on this mock.
+=head2 stubs
+
+Contains all of the methods stubbed for this mock. It maps the method name to
+an array of stubs. Stubs are matched against invocation arguments to determine
+which stub to dispatch to.
+
+This attribute is internal, and not publically accessible.
 
 =head1 METHODS
 
-=head2 isa $class
+=head2 isa
 
-Forced to return true for any package
+    $true = $mock->isa('AnyClass');
 
-=head2 does $role
+This always returns true. It allows the mock object to C<isa()> any class that
+it is required.
 
-Forced to return true for any role
+=head2 does
+
+    $true = $mock->does('AnyRole');
+    $true = $mock->DOES('AnyRole');
+
+This always returns true. It allows the mock object to C<does()> any role that
+is required.
 
 =head2 ref
 
-Returns the value of the object's C<class> attribute. This also works if you
-call C<ref()> as a function instead of a method.
+    $mock  = mock('AnyRef');
+    $class = $mock->ref;  # or ref($mock)
+
+Returns the object's C<class> attribute value. This also works if you call
+C<ref()> as a function instead of a method.
+
+If the object's C<class> attribute has not been set, then it will fallback to
+returning the name of this class.
+
+set.
+
+=head2 can
+
+    $method_ref = $mock->can('any_method');
+
+Always returns a reference to the C<AUTOLOAD()> method. It allows the mock
+object to C<can()> do any method that is required.
 
 =head1 AUTHORS
 

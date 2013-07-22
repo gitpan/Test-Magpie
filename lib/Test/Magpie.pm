@@ -1,6 +1,6 @@
 package Test::Magpie;
 {
-  $Test::Magpie::VERSION = '0.07';
+  $Test::Magpie::VERSION = '0.08';
 }
 # ABSTRACT: Spy on objects to achieve test doubles (mock testing)
 use strict;
@@ -99,7 +99,10 @@ sub at_least {
         unless ! defined $n || looks_like_number $n;
 
     return sub {
-        my ($invocations, $name, $tb) = @_;
+        my ($invocations, $called, $name, $tb) = @_;
+
+        $name ||= sprintf '%s was called at least %u time(s)', $called, $n;
+
         $tb->cmp_ok($invocations, '>=', $n, $name);
     }
 }
@@ -112,7 +115,10 @@ sub at_most {
         unless ! defined $n || looks_like_number $n;
 
     return sub {
-        my ($invocations, $name, $tb) = @_;
+        my ($invocations, $called, $name, $tb) = @_;
+
+        $name ||= sprintf '%s was called at most %u time(s)', $called, $n;
+
         $tb->cmp_ok($invocations, '<=', $n, $name);
     }
 }

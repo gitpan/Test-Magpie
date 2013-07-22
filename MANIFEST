@@ -28,5 +28,6 @@ t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/roles.t
+t/smartmatch.t
 t/verify_spy.t
 t/when_stub.t

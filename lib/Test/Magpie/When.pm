@@ -1,6 +1,6 @@
 package Test::Magpie::When;
 {
-  $Test::Magpie::When::VERSION = '0.07';
+  $Test::Magpie::When::VERSION = '0.08';
 }
 # ABSTRACT: The process of stubbing a mock method call
 use Moose;

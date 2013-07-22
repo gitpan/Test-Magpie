@@ -1,6 +1,6 @@
 package Test::Magpie::ArgumentMatcher;
 {
-  $Test::Magpie::ArgumentMatcher::VERSION = '0.07';
+  $Test::Magpie::ArgumentMatcher::VERSION = '0.08';
 }
 # ABSTRACT: Various templates to catch arguments
 
