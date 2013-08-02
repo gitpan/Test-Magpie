@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More tests => 28;
 use Test::Fatal;
 use Test::Builder::Tester;
 
@@ -19,7 +19,7 @@ $mock->twice() for 1..2;
 
 subtest 'verify()' => sub {
     my $spy = verify($mock);
-    isa_ok $spy, 'Test::Magpie::Spy';
+    isa_ok $spy, 'Test::Magpie::Verify';
 
     is get_attribute_value($spy, 'mock'), $mock, 'has mock';
 
@@ -31,9 +31,17 @@ subtest 'verify()' => sub {
         'invalid arg';
 };
 
-test_out 'ok 1 - once() was called once';
-verify($mock, times => 1, name => 'once() was called once')->once;
-test_test 'name';
+{
+    my $name = 'once() was called once';
+
+    test_out "ok 1 - $name";
+    verify($mock, $name)->once;
+    test_test 'name';
+
+    test_out "ok 1 - $name";
+    verify($mock, times => 1, $name)->once;
+    test_test 'name with other options';
+}
 
 test_out 'ok 1 - once() was called 1 time(s)';
 verify($mock)->once;
@@ -200,5 +208,3 @@ ERR
 like exception {
     verify($mock, times => 2, at_least => 2, at_most => 2)->twice
 }, qr/^You can set only one of these options:/, 'multiple options';
-
-done_testing(27);

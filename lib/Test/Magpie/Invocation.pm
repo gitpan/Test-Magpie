@@ -1,8 +1,9 @@
 package Test::Magpie::Invocation;
 {
-  $Test::Magpie::Invocation::VERSION = '0.08';
+  $Test::Magpie::Invocation::VERSION = '0.09';
 }
 # ABSTRACT: Represents an invocation of a method
+
 use Moose;
 use namespace::autoclean;
 
@@ -33,7 +34,7 @@ Returns a list of all arguments passed to the method call.
 
 =head2 method_name
 
-The name of the method invoked;
+The name of the method invoked.
 
 =head1 AUTHORS
 

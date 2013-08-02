@@ -1,12 +1,12 @@
 package Test::Magpie::Mock;
 {
-  $Test::Magpie::Mock::VERSION = '0.08';
+  $Test::Magpie::Mock::VERSION = '0.09';
 }
 # ABSTRACT: Mock objects
 
+
 use Moose -metaclass => 'Test::Magpie::Meta::Class';
 use namespace::autoclean;
-
 
 use aliased 'Test::Magpie::Invocation';
 use aliased 'Test::Magpie::Stub';
@@ -163,38 +163,36 @@ This attribute is internal, and not publically accessible.
 
 =head2 isa
 
+Always returns true. It allows the mock object to C<isa()> any class that
+is required.
+
     $true = $mock->isa('AnyClass');
 
-This always returns true. It allows the mock object to C<isa()> any class that
-it is required.
-
 =head2 does
+
+Always returns true. It allows the mock object to C<does()> any role that
+is required.
 
     $true = $mock->does('AnyRole');
     $true = $mock->DOES('AnyRole');
 
-This always returns true. It allows the mock object to C<does()> any role that
-is required.
-
 =head2 ref
-
-    $mock  = mock('AnyRef');
-    $class = $mock->ref;  # or ref($mock)
 
 Returns the object's C<class> attribute value. This also works if you call
 C<ref()> as a function instead of a method.
 
+    $mock  = mock('AnyRef');
+    $class = $mock->ref;  # or ref($mock)
+
 If the object's C<class> attribute has not been set, then it will fallback to
 returning the name of this class.
 
-set.
-
 =head2 can
-
-    $method_ref = $mock->can('any_method');
 
 Always returns a reference to the C<AUTOLOAD()> method. It allows the mock
 object to C<can()> do any method that is required.
+
+    $method_ref = $mock->can('any_method');
 
 =head1 AUTHORS
 

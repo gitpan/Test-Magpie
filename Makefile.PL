@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Spy on objects to achieve test doubles (mock testing)\r",
+  "ABSTRACT" => "Mocking framework with method stubs and behaviour verification\r",
   "AUTHOR" => "Oliver Charles <oliver.g.charles\@googlemail.com>, Steven Lee <stevenwh.lee\@gmail.com>",
   "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
@@ -22,7 +22,8 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Carp" => 0,
     "Devel::PartialDump" => 0,
-    "List::AllUtils" => 0,
+    "Exporter" => 0,
+    "List::Util" => 0,
     "Moose" => 0,
     "Moose::Meta::Class" => 0,
     "Moose::Role" => 0,
@@ -32,11 +33,10 @@ my %WriteMakefileArgs = (
     "MooseX::Types::Structured" => 0,
     "Scalar::Util" => 0,
     "Set::Object" => 0,
-    "Sub::Exporter" => 0,
     "Test::Builder" => 0,
     "UNIVERSAL::ref" => 0,
     "aliased" => 0,
-    "if" => 0,
+    "experimental" => 0,
     "namespace::autoclean" => 0,
     "strict" => 0,
     "warnings" => 0
@@ -50,7 +50,7 @@ my %WriteMakefileArgs = (
     "constant" => 0,
     "overload" => 0
   },
-  "VERSION" => "0.08",
+  "VERSION" => "0.09",
   "test" => {
     "TESTS" => "t/*.t"
   }

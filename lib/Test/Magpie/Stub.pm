@@ -1,8 +1,10 @@
 package Test::Magpie::Stub;
 {
-  $Test::Magpie::Stub::VERSION = '0.08';
+  $Test::Magpie::Stub::VERSION = '0.09';
 }
 # ABSTRACT: The declaration of a stubbed method
+
+
 use Moose;
 use namespace::autoclean;
 
@@ -10,6 +12,7 @@ use MooseX::Types::Moose qw( ArrayRef );
 use Scalar::Util qw( blessed );
 
 with 'Test::Magpie::Role::MethodCall';
+
 
 has 'executions' => (
     isa => ArrayRef,
@@ -22,12 +25,6 @@ has 'executions' => (
     }
 );
 
-sub execute {
-    my $self = shift;
-    #$self->_has_executions || confess "Stub has no more executions";
-
-    return ( $self->_next_execution )->();
-}
 
 sub then_return {
     my $self = shift;
@@ -37,6 +34,7 @@ sub then_return {
     });
     return $self;
 }
+
 
 sub then_die {
     my $self = shift;
@@ -50,6 +48,14 @@ sub then_die {
         }
     });
     return $self;
+}
+
+
+sub execute {
+    my $self = shift;
+    #$self->_has_executions || confess "Stub has no more executions";
+
+    return ( $self->_next_execution )->();
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -81,7 +87,7 @@ the same method name.
 
 =head2 executions
 
-An array reference queue of all stub executions. Internal.
+Internal. An array reference containing all stub executions.
 
 =head1 METHODS
 
@@ -97,7 +103,7 @@ execution stack.
 
 =head2 execute
 
-Internal. Will execute the next execution, if possible
+Internal. Executes the next execution, if possible
 
 =head1 AUTHORS
 

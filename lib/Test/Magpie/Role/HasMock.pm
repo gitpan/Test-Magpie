@@ -1,6 +1,6 @@
 package Test::Magpie::Role::HasMock;
 {
-  $Test::Magpie::Role::HasMock::VERSION = '0.08';
+  $Test::Magpie::Role::HasMock::VERSION = '0.09';
 }
 # ABSTRACT: A role for objects that wrap around a mock
 use Moose::Role;

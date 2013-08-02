@@ -1,21 +1,23 @@
 package Test::Magpie::ArgumentMatcher;
 {
-  $Test::Magpie::ArgumentMatcher::VERSION = '0.08';
+  $Test::Magpie::ArgumentMatcher::VERSION = '0.09';
 }
 # ABSTRACT: Various templates to catch arguments
 
 use strict;
 use warnings;
 
-use Test::Magpie::Util match => { -as => '_match' };
-use Set::Object qw( set );
+use Exporter qw( import );
+use Set::Object ();
+use Test::Magpie::Util ();
 
-use Sub::Exporter -setup => {
-    exports => [
-        qw( anything hash custom_matcher type ),
-        set => sub { \&_set }
-    ],
-};
+our @EXPORT_OK = qw(
+    anything
+    custom_matcher
+    hash
+    set
+    type
+);
 
 sub anything {
     bless sub { return () }, __PACKAGE__;
@@ -35,7 +37,7 @@ sub hash {
         my %hash = @_;
         for (keys %template) {
             if (my $v = delete $hash{$_}) {
-                return unless _match($v, $template{$_});
+                return unless Test::Magpie::Util::match($v, $template{$_});
             }
             else {
                 return;
@@ -45,15 +47,17 @@ sub hash {
     }, __PACKAGE__;
 }
 
-sub _set {
-    my ($take) = set(@_);
+sub set {
+    my ($take) = Set::Object->new(@_);
     bless sub {
-        return set(@_) == $take ? () : undef;
+        return Set::Object->new(@_) == $take ? () : undef;
     }, __PACKAGE__;
 }
 
 sub match {
     my ($self, @input) = @_;
+    use Carp;
+    confess unless ref $self;
     return $self->(@input);
 }
 

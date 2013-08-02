@@ -1,5 +1,5 @@
 {
-   "abstract" : "Spy on objects to achieve test doubles (mock testing)\r",
+   "abstract" : "Mocking framework with method stubs and behaviour verification\r",
    "author" : [
       "Oliver Charles <oliver.g.charles@googlemail.com>",
       "Steven Lee <stevenwh.lee@gmail.com>"
@@ -14,6 +14,20 @@
       "version" : "2"
    },
    "name" : "Test-Magpie",
+   "no_index" : {
+      "namespace" : [
+         "Test::Magpie::Meta",
+         "Test::Magpie::Role"
+      ],
+      "package" : [
+         "Test::Magpie::Inspect",
+         "Test::Magpie::Stub",
+         "Test::Magpie::Types",
+         "Test::Magpie::Util",
+         "Test::Magpie::Verify",
+         "Test::Magpie::When"
+      ]
+   },
    "prereqs" : {
       "configure" : {
          "requires" : {
@@ -31,7 +45,8 @@
          "requires" : {
             "Carp" : "0",
             "Devel::PartialDump" : "0",
-            "List::AllUtils" : "0",
+            "Exporter" : "0",
+            "List::Util" : "0",
             "Moose" : "0",
             "Moose::Meta::Class" : "0",
             "Moose::Role" : "0",
@@ -41,11 +56,10 @@
             "MooseX::Types::Structured" : "0",
             "Scalar::Util" : "0",
             "Set::Object" : "0",
-            "Sub::Exporter" : "0",
             "Test::Builder" : "0",
             "UNIVERSAL::ref" : "0",
             "aliased" : "0",
-            "if" : "0",
+            "experimental" : "0",
             "namespace::autoclean" : "0",
             "perl" : "5.010",
             "strict" : "0",
@@ -64,6 +78,24 @@
          }
       }
    },
+   "provides" : {
+      "Test::Magpie" : {
+         "file" : "lib/Test/Magpie.pm",
+         "version" : "0.09"
+      },
+      "Test::Magpie::ArgumentMatcher" : {
+         "file" : "lib/Test/Magpie/ArgumentMatcher.pm",
+         "version" : "0.09"
+      },
+      "Test::Magpie::Invocation" : {
+         "file" : "lib/Test/Magpie/Invocation.pm",
+         "version" : "0.09"
+      },
+      "Test::Magpie::Mock" : {
+         "file" : "lib/Test/Magpie/Mock.pm",
+         "version" : "0.09"
+      }
+   },
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
@@ -76,17 +108,12 @@
          "web" : "http://github.com/ocharles/Test-Magpie"
       }
    },
-   "version" : "0.08",
+   "version" : "0.09",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018000"
       },
       "plugins" : [
-         {
-            "class" : "Dist::Zilla::Plugin::MetaResources",
-            "name" : "MetaResources",
-            "version" : "4.300034"
-         },
          {
             "class" : "Dist::Zilla::Plugin::GatherDir",
             "name" : "@Filter/GatherDir",
@@ -175,6 +202,21 @@
          {
             "class" : "Dist::Zilla::Plugin::PkgVersion",
             "name" : "PkgVersion",
+            "version" : "4.300034"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::MetaResources",
+            "name" : "MetaResources",
+            "version" : "4.300034"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::MetaProvides::Package",
+            "name" : "MetaProvides::Package",
+            "version" : "1.14000003"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::MetaNoIndex",
+            "name" : "MetaNoIndex",
             "version" : "4.300034"
          },
          {

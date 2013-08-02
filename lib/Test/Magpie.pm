@@ -1,35 +1,34 @@
-package Test::Magpie;
-{
-  $Test::Magpie::VERSION = '0.08';
-}
-# ABSTRACT: Spy on objects to achieve test doubles (mock testing)
 use strict;
 use warnings;
+package Test::Magpie;
+{
+  $Test::Magpie::VERSION = '0.09';
+}
+# ABSTRACT: Mocking framework with method stubs and behaviour verification
+
 
 use aliased 'Test::Magpie::Inspect';
 use aliased 'Test::Magpie::Mock';
-use aliased 'Test::Magpie::Spy';
+use aliased 'Test::Magpie::Verify';
 use aliased 'Test::Magpie::When';
 
 use Carp qw( croak );
+use Exporter qw( import );
 use Scalar::Util qw( looks_like_number );
 use Test::Magpie::Types 'NumRange', Mock => { -as => 'MockType' };
 
-use Sub::Exporter -setup => {
-    exports => [qw(
-        inspect mock when verify
-        at_least at_most
-    )]
-};
 
-sub inspect {
-    my ($mock) = @_;
+our @EXPORT = qw(
+    mock
+    when
+    verify
+);
+our @EXPORT_OK = qw(
+    at_least
+    at_most
+    inspect
+);
 
-    croak 'inspect() must be given a mock object'
-        unless defined $mock && MockType->check($mock);
-
-    return Inspect->new(mock => $mock);
-}
 
 sub mock {
     return Mock->new if @_ == 0;
@@ -42,17 +41,32 @@ sub mock {
     return Mock->new(class => $class);
 }
 
+
+sub when {
+    my ($mock) = @_;
+
+    croak 'when() must be given a mock object'
+        unless defined $mock && MockType->check($mock);
+
+    return When->new(mock => $mock);
+}
+
+
 sub verify {
-    my ($mock, %options) = @_;
-    my @options = qw( times at_least at_most between );
-    my @used_options = grep { defined $options{$_} } @options;
+    my $mock = shift;
+    my $test_name;
+    $test_name = pop if (@_ % 2 == 1);
+    my %options = @_;
+
+    # set default option if none given
+    $options{times} = 1 if keys %options == 0;
 
     croak 'verify() must be given a mock object'
         unless defined $mock && MockType->check($mock);
 
     croak 'You can set only one of these options: '
-        . join ', ', map {"'$_'"} @options
-        unless scalar @used_options <= 1;
+        . join ', ', map {"'$_'"} keys %options
+        unless keys %options == 1;
 
     if (defined $options{times}) {
         croak "'times' option must be a number" unless (
@@ -76,20 +90,22 @@ sub verify {
         );
     }
 
-    # set default option
-    $options{times} = 1 if @used_options == 0;
+    # set test name if given
+    $options{test_name} = $test_name if defined $test_name;
 
-    return Spy->new(mock => $mock, %options);
+    return Verify->new(mock => $mock, %options);
 }
 
-sub when {
+
+sub inspect {
     my ($mock) = @_;
 
-    croak 'when() must be given a mock object'
+    croak 'inspect() must be given a mock object'
         unless defined $mock && MockType->check($mock);
 
-    return When->new(mock => $mock);
+    return Inspect->new(mock => $mock);
 }
+
 
 sub at_least {
     warnings::warnif('deprecated', 'at_least() is deprecated');
@@ -99,13 +115,15 @@ sub at_least {
         unless ! defined $n || looks_like_number $n;
 
     return sub {
-        my ($invocations, $called, $name, $tb) = @_;
+        my ($invocations, $called, $test_name, $tb) = @_;
 
-        $name ||= sprintf '%s was called at least %u time(s)', $called, $n;
+        $test_name = sprintf '%s was called at least %u time(s)', $called, $n
+            unless defined $test_name;
 
-        $tb->cmp_ok($invocations, '>=', $n, $name);
+        $tb->cmp_ok($invocations, '>=', $n, $test_name);
     }
 }
+
 
 sub at_most {
     warnings::warnif('deprecated', 'at_most() is deprecated');
@@ -115,11 +133,12 @@ sub at_most {
         unless ! defined $n || looks_like_number $n;
 
     return sub {
-        my ($invocations, $called, $name, $tb) = @_;
+        my ($invocations, $called, $test_name, $tb) = @_;
 
-        $name ||= sprintf '%s was called at most %u time(s)', $called, $n;
+        $test_name = sprintf '%s was called at most %u time(s)', $called, $n
+            unless defined $test_name;
 
-        $tb->cmp_ok($invocations, '<=', $n, $name);
+        $tb->cmp_ok($invocations, '<=', $n, $test_name);
     }
 }
 
@@ -133,15 +152,21 @@ __END__
 
 =head1 NAME
 
-Test::Magpie - Spy on objects to achieve test doubles (mock testing)
+Test::Magpie - Mocking framework with method stubs and behaviour verification
 
 =head1 SYNOPSIS
 
-    use Test::Magpie qw( mock verify when );
+    use Test::Magpie;
 
+    # create the mock object and stub
     my $baker = mock;
+    when($mock)->bake_loaf('white')->then_return($bread);
+
+    # execute the code under test
     my $bakery = Bakery->new( bakers => [ $baker ] );
-    my $bread = $bakery->buy_loaf( amount => 2, type => 'white' );
+    my @loaves = $bakery->buy_loaf( amount => 2, type => 'white' );
+
+    # verify the interactions with the mock object
     verify($baker, times => 2)->bake_loaf('white');
 
 =head1 DESCRIPTION
@@ -153,10 +178,9 @@ happen. I find this approach to be significantly more flexible and easier to
 work with than mocking systems like EasyMock, so I created a Perl
 implementation.
 
-C<Test::Magpie> doesn't do much, but it does export the main routines that you
-use to interact with the framework.
+=over 4
 
-=head2 Mock objects
+=item Mock objects
 
 Mock objects, represented by L<Test::Magpie::Mock> objects, are objects that
 pretend to be everything you could ever want them to be. A mock object can have
@@ -164,98 +188,151 @@ any method called on it, does every roles, and isa subclass of any superclass.
 This allows you to easily throw a mock object around it will be treated as
 though it was a real object.
 
-=head2 Methods and stubbing
+=item Method stubbing
 
 Any method can be called on a mock object, and it will be logged as an
-invocation. Most often though, clients will be more interested in the result of
-calling a method with some arguments, so you may stub methods in order to
-specify what happens at execution.
+invocation. By default, method calls return C<undef> in scalar context or an
+empty list in list context. Often, though, clients will be interested in the
+result of calling a method with some arguments. So you may specify how a
+method stub should respond when it is called.
 
-=head2 Verification
+=item Verify interactions
 
 After calling your concrete code (the code under test) you may want to check
 that the code did operate correctly on the mock. To do this, you can use
 verifications to make sure code was called, with correct parameters and the
 correct amount of times.
 
-=head2 Argument matching
+=item Argument matching
 
 Magpie gives you some helpful methods to validate arguments passed in to calls.
 You can check equality between arguments, or consume a general type of argument,
 or consume multiple arguments. See L<Test::Magpie::ArgumentMatcher> for the
 juicy details.
 
+=back
+
 =head1 FUNCTIONS
 
-=head2 mock([$blessed])
+=head2 mock
 
-Construct a new instance of a mock object.
+C<mock()> constructs a new instance of a mock object.
 
-C<$blessed> is an optional argument to set the type that the mock object is
+    $mock = mock;
+    $mock->method(@args);
+
+C<$class> is an optional argument to set the type that the mock object is
 blessed into. This value will be returned when C<ref()> is called on the object.
 
-=head2 verify($mock, [%options])
+    $mock = mock($class);
+    is( ref($mock), $class );
 
-Begin the verification process on a mock. Takes a mock object, and gives back a
-L<Test::Magpie::Spy>. You don't really need to be concerned about the API of
-this object, you should treat it as the same as the mock object itself. Any
-method calls trigger verification that the given method was passed, and will
-fail if the method was never invoked on the mock object.
+=head2 when
 
-C<%options> contains a few nice options to help make verification easier:
+C<when()> is used to tell the method stub to return some value(s) or to raise
+an exception.
+
+    when($mock)->method(@args)->then_return(1, 2, 3);
+    when($mock)->invalid(@args)->then_die('exception');
+
+=head2 verify
+
+C<verify()> is used to check the interactions on your mock object and prints
+the test result. C<verify()> plays nicely with L<Test::Simple> and Co - it
+depends on them for setting a test plan and its calls are counted in the test
+plan.
+
+    verify($mock)->method(@args)
+    # prints: ok 1 - method("foo") was called 1 time(s)
+
+C<verify()> accepts an optional C<$test_name> to print a custom name for the
+test instead of the default.
+
+    verify($mock, $test_name)->method(@args)
+    # prints: ok 1 - record inserted into database'
+
+C<verify()> accepts a few options to help your verifications:
+
+    verify( $mock, times    => 3,     )->method(@args)
+    verify( $mock, at_least => 3      )->method(@args)
+    verify( $mock, at_most  => 5      )->method(@args)
+    verify( $mock, between  => [3, 5] )->method(@args)
 
 =over 4
 
 =item times
-
-    verify($mock, times => 3)->method
 
 Specifies the number of times the given method is expected to be called. The
 default is 1 if no other option is specified.
 
 =item at_least
 
-    verify($mock, at_least => 3)->method
-
-Specifies the minimum number of times the given method is expected to be called.
+Specifies the minimum number of times the given method is expected to be
+called.
 
 =item at_most
 
-    verify($mock, at_most => 5)->method
-
-Specifies the maximum number of times the given method is expected to be called.
+Specifies the maximum number of times the given method is expected to be
+called.
 
 =item between
-
-    verify($mock, between => [3, 5])->method
 
 Specifies the minimum and maximum number of times the given method is expected
 to be called.
 
 =back
 
-=head2 when($mock)
+A C<$test_name> may also be supplied after the option.
 
-Specify a stub method for C<$mock>.
+    verify($mock, times => 3, $test_name)->method(@args)
 
-Returns an object that should be treated the same as C<$mock> (that is, having
-all the same methods), but a method call stores a stub method in the mock class,
-rather than an invocation. After specifying the method you wish to stub, you
-will be working with a L<Test::Magpie::Stub>, and you should consult that
-documentation for how to fully specify the stub.
+=head2 inspect
 
-=head2 inspect($mock)
+Inspect method invocations on a mock object.
 
-Inspect method invocations on a mock object. See L<Test::Magpie::Inspect> for
-more information.
+    $invocation = inspect($mock)->method(@args);
+    is( $invocation->method_name, 'foo' );
+    is_deeply( [$invocation->arguments], [qw( bar baz )] );
 
-=head2 at_least(Int $n)
+=head2 at_least (deprecated)
 
-Verify that a method was invoked at least C<$n> times
+Used with C<verify()> to verify that a method was invoked at least C<$n> times.
 
-=head2 at_most(Int $n)
+    verify($mock, times => at_least($n))->method(@args);
 
-Verify that a method was invoked at most C<$n> times
+This function has been deprecated. Use the C<at_least> option for C<verify()>
+instead.
+
+=head2 at_most (deprecated)
+
+Used with C<verify()> to verify that a method was invoked at most C<$n> times.
+
+    verify($mock, times => at_most($n))->method(@args);
+
+This function has been deprecated. Use the C<at_most> option for C<verify()>
+instead.
+
+=head1 EXPORTS
+
+This module exports the following functions by default:
+
+=over 4
+
+=item *
+
+mock
+
+=item *
+
+when
+
+=item *
+
+verify
+
+=back
+
+All other functions need to be imported explicitly.
 
 =head1 AUTHORS
 

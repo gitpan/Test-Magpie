@@ -1,6 +1,6 @@
 package Test::Magpie::Util;
 {
-  $Test::Magpie::Util::VERSION = '0.08';
+  $Test::Magpie::Util::VERSION = '0.09';
 }
 # ABSTRACT: Internal utility functions for Test::Magpie
 
@@ -9,19 +9,18 @@ use warnings;
 
 # smartmatch dependencies
 use 5.010;
-no if $] >= 5.017011, warnings => 'experimental::smartmatch';
+use experimental qw( smartmatch );
 
+use Exporter qw( import );
 use Scalar::Util qw( blessed looks_like_number refaddr );
 use Moose::Util qw( find_meta );
 
-use Sub::Exporter -setup => {
-    exports => [qw(
-        extract_method_name
-        get_attribute_value
-        has_caller_package
-        match
-    )],
-};
+our @EXPORT_OK = qw(
+    extract_method_name
+    get_attribute_value
+    has_caller_package
+    match
+);
 
 
 sub extract_method_name {
