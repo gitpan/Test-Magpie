@@ -1,8 +1,8 @@
 package Test::Magpie::Verify;
 {
-  $Test::Magpie::Verify::VERSION = '0.09';
+  $Test::Magpie::Verify::VERSION = '0.10';
 }
-# ABSTRACT: Look into the invocation history of a mock for verification
+# ABSTRACT: Verify interactions with a mock object by looking into its invocation history
 
 use Moose;
 use namespace::autoclean;
@@ -47,14 +47,14 @@ sub AUTOLOAD {
     my $method_name = extract_method_name($AUTOLOAD);
 
     my $observe = Invocation->new(
-        method_name => $method_name,
-        arguments   => \@_,
+        name => $method_name,
+        args => \@_,
     );
 
-    my $mock        = get_attribute_value($self, 'mock');
-    my $invocations = get_attribute_value($mock, 'invocations');
+    my $mock  = get_attribute_value($self, 'mock');
+    my $calls = get_attribute_value($mock, 'calls');
 
-    my $matches = grep { $observe->satisfied_by($_) } @$invocations;
+    my $matches = grep { $observe->satisfied_by($_) } @$calls;
 
     my $test_name = $self->_test_name;
 
@@ -95,48 +95,3 @@ sub AUTOLOAD {
 
 __PACKAGE__->meta->make_immutable;
 1;
-
-__END__
-
-=pod
-
-=encoding utf-8
-
-=head1 NAME
-
-Test::Magpie::Verify - Look into the invocation history of a mock for verification
-
-=head1 DESCRIPTION
-
-Spy objects allow you to look inside a mock and verify that certain methods have
-been called. You create these objects by using C<verify> from L<Test::Magpie>.
-
-Spy objects do not have a public API as such; they share the same method calls
-as the mock object itself. The difference being, a method call now checks that
-the method was invoked on the mock at some point in time, and if not, fails a
-test.
-
-You may use argument matchers in verifying method calls.
-
-=head1 AUTHORS
-
-=over 4
-
-=item *
-
-Oliver Charles <oliver.g.charles@googlemail.com>
-
-=item *
-
-Steven Lee <stevenwh.lee@gmail.com>
-
-=back
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2013 by Oliver Charles.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut

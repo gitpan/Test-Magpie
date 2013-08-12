@@ -1,6 +1,6 @@
 package Test::Magpie::Mock;
 {
-  $Test::Magpie::Mock::VERSION = '0.09';
+  $Test::Magpie::Mock::VERSION = '0.10';
 }
 # ABSTRACT: Mock objects
 
@@ -31,7 +31,7 @@ has 'class' => (
 );
 
 
-has 'invocations' => (
+has 'calls' => (
     isa => ArrayRef[Invocation],
     is => 'bare',
     default => sub { [] }
@@ -48,24 +48,22 @@ sub AUTOLOAD {
     my $self = shift;
     my $method_name = extract_method_name($AUTOLOAD);
 
-    # record the method invocation for verification
-    my $invocation  = Invocation->new(
-        method_name => $method_name,
-        arguments   => \@_,
+    # record the method call for verification
+    my $method_call = Invocation->new(
+        name => $method_name,
+        args => \@_,
     );
 
-    my $invocations = get_attribute_value($self, 'invocations');
-    push @$invocations, $invocation;
+    my $calls = get_attribute_value($self, 'calls');
+    my $stubs = get_attribute_value($self, 'stubs');
+
+    push @$calls, $method_call;
 
     # find a stub to return a response
-    if (
-        my $stubs = get_attribute_value($self, 'stubs')->{ $method_name }
-    ) {
-        for my $stub (@$stubs) {
-            return $stub->execute if (
-                $stub->satisfied_by($invocation) &&
-                $stub->_has_executions
-            );
+    if (defined $stubs->{$method_name}) {
+        foreach my $stub ( @{$stubs->{$method_name}} ) {
+            return $stub->execute
+                if $stub->satisfied_by($method_call);
         }
     }
     return;
@@ -104,11 +102,13 @@ __END__
 
 =pod
 
-=encoding utf-8
-
 =head1 NAME
 
 Test::Magpie::Mock - Mock objects
+
+=head1 VERSION
+
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -144,9 +144,9 @@ occured.
 The name of the class that the object is pretending to be blessed into. Calling
 C<ref()> on the mock object will return this class name.
 
-=head2 invocations
+=head2 calls
 
-An array reference containing a record of all methods invoked on this mock.
+An array reference containing a record of all methods called on this mock.
 These are used for verification and inspection.
 
 This attribute is internal, and not publically accessible.
