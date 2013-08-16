@@ -14,20 +14,6 @@
       "version" : "2"
    },
    "name" : "Test-Magpie",
-   "no_index" : {
-      "namespace" : [
-         "Test::Magpie::Meta",
-         "Test::Magpie::Role"
-      ],
-      "package" : [
-         "Test::Magpie::Inspect",
-         "Test::Magpie::Stub",
-         "Test::Magpie::Stubber",
-         "Test::Magpie::Types",
-         "Test::Magpie::Util",
-         "Test::Magpie::Verify"
-      ]
-   },
    "prereqs" : {
       "configure" : {
          "requires" : {
@@ -36,7 +22,9 @@
       },
       "develop" : {
          "requires" : {
-            "Test::Pod" : "1.41"
+            "Pod::Coverage::TrustPod" : "0",
+            "Test::Pod" : "1.41",
+            "Test::Pod::Coverage" : "1.08"
          }
       },
       "runtime" : {
@@ -67,31 +55,13 @@
       },
       "test" : {
          "requires" : {
-            "Exception::Tiny" : "0",
             "Test::Builder::Tester" : "0",
             "Test::Fatal" : "0",
             "Test::Moose" : "0",
             "Test::More" : "0",
+            "Throwable" : "0",
             "constant" : "0"
          }
-      }
-   },
-   "provides" : {
-      "Test::Magpie" : {
-         "file" : "lib/Test/Magpie.pm",
-         "version" : "0.10"
-      },
-      "Test::Magpie::ArgumentMatcher" : {
-         "file" : "lib/Test/Magpie/ArgumentMatcher.pm",
-         "version" : "0.10"
-      },
-      "Test::Magpie::Invocation" : {
-         "file" : "lib/Test/Magpie/Invocation.pm",
-         "version" : "0.10"
-      },
-      "Test::Magpie::Mock" : {
-         "file" : "lib/Test/Magpie/Mock.pm",
-         "version" : "0.10"
       }
    },
    "release_status" : "stable",
@@ -106,12 +76,17 @@
          "web" : "http://github.com/ocharles/Test-Magpie"
       }
    },
-   "version" : "0.10",
+   "version" : "0.11",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018000"
       },
       "plugins" : [
+         {
+            "class" : "Dist::Zilla::Plugin::MetaResources",
+            "name" : "MetaResources",
+            "version" : "4.300035"
+         },
          {
             "class" : "Dist::Zilla::Plugin::GatherDir",
             "name" : "@Filter/GatherDir",
@@ -208,26 +183,6 @@
             "version" : "4.300035"
          },
          {
-            "class" : "Dist::Zilla::Plugin::MetaResources",
-            "name" : "MetaResources",
-            "version" : "4.300035"
-         },
-         {
-            "class" : "Dist::Zilla::Plugin::MetaProvides::Package",
-            "name" : "MetaProvides::Package",
-            "version" : "1.14000003"
-         },
-         {
-            "class" : "Dist::Zilla::Plugin::MetaNoIndex",
-            "name" : "MetaNoIndex",
-            "version" : "4.300035"
-         },
-         {
-            "class" : "Dist::Zilla::Plugin::FileFinder::Filter",
-            "name" : "PublicModules",
-            "version" : "4.300035"
-         },
-         {
             "class" : "Dist::Zilla::Plugin::PodWeaver",
             "name" : "PodWeaver",
             "version" : "3.101641"
@@ -235,6 +190,11 @@
          {
             "class" : "Dist::Zilla::Plugin::PodSyntaxTests",
             "name" : "PodSyntaxTests",
+            "version" : "4.300035"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::PodCoverageTests",
+            "name" : "PodCoverageTests",
             "version" : "4.300035"
          },
          {

@@ -43,14 +43,14 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
-    "Exception::Tiny" => 0,
     "Test::Builder::Tester" => 0,
     "Test::Fatal" => 0,
     "Test::Moose" => 0,
     "Test::More" => 0,
+    "Throwable" => 0,
     "constant" => 0
   },
-  "VERSION" => "0.10",
+  "VERSION" => "0.11",
   "test" => {
     "TESTS" => "t/*.t"
   }

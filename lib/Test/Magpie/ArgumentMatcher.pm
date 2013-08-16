@@ -1,6 +1,6 @@
 package Test::Magpie::ArgumentMatcher;
 {
-  $Test::Magpie::ArgumentMatcher::VERSION = '0.10';
+  $Test::Magpie::ArgumentMatcher::VERSION = '0.11';
 }
 # ABSTRACT: Various templates to catch arguments
 
@@ -104,13 +104,11 @@ __END__
 
 =pod
 
+=encoding utf-8
+
 =head1 NAME
 
 Test::Magpie::ArgumentMatcher - Various templates to catch arguments
-
-=head1 VERSION
-
-version 0.10
 
 =head1 SYNOPSIS
 
